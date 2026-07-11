@@ -312,6 +312,32 @@
       border-color: var(--rose);
     }
 
+    #exportBtn, #importBtn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    #exportBtn:hover {
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    #importBtn:hover {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    #importInput {
+      display: none;
+    }
+
     /* ---------- Topic sections ---------- */
     .topic {
       background: var(--panel);
@@ -649,6 +675,9 @@
         <div class="chip" data-v="unsolved">Unsolved</div>
         <div class="chip" data-v="solved">Solved</div>
       </div>
+      <button id="exportBtn">Export progress</button>
+      <button id="importBtn">Import progress</button>
+      <input type="file" id="importInput" accept=".json">
       <button id="resetBtn">Reset progress</button>
     </div>
 
@@ -714,25 +743,25 @@
     let solved = {};
     let streak = { current: 0, best: 0, lastDate: null };
 
-    async function loadProgress() {
+    function loadProgress() {
       try {
-        const res = await window.storage.get(STORAGE_KEY, false);
-        if (res && res.value) solved = JSON.parse(res.value);
+        const res = localStorage.getItem(STORAGE_KEY);
+        if (res) solved = JSON.parse(res);
       } catch (e) { solved = {}; }
       try {
-        const res = await window.storage.get(STREAK_KEY, false);
-        if (res && res.value) streak = JSON.parse(res.value);
+        const res = localStorage.getItem(STREAK_KEY);
+        if (res) streak = JSON.parse(res);
       } catch (e) { streak = { current: 0, best: 0, lastDate: null }; }
       updateStreakDisplay();
       render();
     }
 
-    async function saveProgress() {
-      try { await window.storage.set(STORAGE_KEY, JSON.stringify(solved), false); }
+    function saveProgress() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(solved)); }
       catch (e) { console.error('save failed', e); }
     }
 
-    async function updateStreak() {
+    function updateStreak() {
       const today = new Date().toISOString().split('T')[0];
       if (streak.lastDate === today) return;
       const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -743,7 +772,7 @@
       }
       streak.lastDate = today;
       if (streak.current > streak.best) streak.best = streak.current;
-      try { await window.storage.set(STREAK_KEY, JSON.stringify(streak), false); }
+      try { localStorage.setItem(STREAK_KEY, JSON.stringify(streak)); }
       catch (e) { console.error('streak save failed', e); }
       updateStreakDisplay();
     }
@@ -758,10 +787,10 @@
       render();
     }
 
-    async function resetProgress() {
+    function resetProgress() {
       if (!confirm('Clear all checked-off progress? This cannot be undone.')) return;
       solved = {};
-      try { await window.storage.delete(STORAGE_KEY, false); } catch (e) { }
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
       render();
     }
 
@@ -801,6 +830,47 @@
     document.getElementById('topicFilter').addEventListener('change', render);
     document.getElementById('patternFilter').addEventListener('change', render);
     document.getElementById('resetBtn').addEventListener('click', resetProgress);
+
+    function exportProgress() {
+      const data = { solved, streak };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dsa-progress-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importProgress() {
+      document.getElementById('importInput').click();
+    }
+
+    document.getElementById('importInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          solved = data.solved || {};
+          streak = data.streak || { current: 0, best: 0, lastDate: null };
+          saveProgress();
+          try { localStorage.setItem(STREAK_KEY, JSON.stringify(streak)); } catch (e) {}
+          updateStreakDisplay();
+          render();
+          alert('Progress imported successfully!');
+        } catch (err) {
+          alert('Error importing progress: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', exportProgress);
+    document.getElementById('importBtn').addEventListener('click', importProgress);
 
     const openTopics = new Set();
 
