@@ -1,518 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DSA Mastery Blueprint</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0a0f1c;
-    --panel: #111a2e;
-    --panel-2: #0d1526;
-    --line: #1e2b47;
-    --text: #dbe4f3;
-    --muted: #7488ac;
-    --muted-2: #4d5f82;
-    --teal: #2dd4bf;
-    --amber: #f5a524;
-    --rose: #fb7185;
-    --green: #34d399;
-    --violet: #a78bfa;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-attachment: fixed;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    padding: 28px 18px 80px;
-  }
-  .wrap { max-width: 1100px; margin: 0 auto; }
-
-  /* ---------- Header ---------- */
-  header {
-    background: linear-gradient(160deg, var(--panel) 0%, var(--panel-2) 100%);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 30px 32px;
-    margin-bottom: 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: "";
-    position: absolute; top: 0; right: 0; bottom: 0; width: 240px;
-    background: radial-gradient(circle at top right, rgba(45,212,191,0.12), transparent 70%);
-    pointer-events: none;
-  }
-  .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin: 0 0 10px;
-  }
-  h1 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: clamp(24px, 4vw, 34px);
-    font-weight: 800;
-    margin: 0 0 8px;
-    letter-spacing: -0.01em;
-  }
-  header p.sub { color: var(--muted); margin: 0 0 22px; max-width: 640px; line-height: 1.55; font-size: 14.5px; }
-
-  .stat-row { display: flex; flex-wrap: wrap; gap: 12px; }
-  .stat-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 18px;
-    min-width: 120px;
-    flex: 1;
-  }
-  .stat-card .n { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; }
-  .stat-card .l { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px;}
-  .stat-card.easy .n { color: var(--green); }
-  .stat-card.medium .n { color: var(--amber); }
-  .stat-card.hard .n { color: var(--rose); }
-  .stat-card.total .n { color: var(--teal); }
-
-  .progress-outer {
-    margin-top: 18px;
-    height: 10px;
-    border-radius: 6px;
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    overflow: hidden;
-  }
-  .progress-inner {
-    height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--green));
-    width: 0%;
-    transition: width 0.4s ease;
-  }
-  .progress-label { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
-
-  /* ---------- Controls ---------- */
-  .controls {
-    position: sticky; top: 10px; z-index: 20;
-    background: rgba(17,26,46,0.92);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 20px;
-    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-  }
-  .controls input[type="text"] {
-    flex: 1 1 220px;
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    color: var(--text);
-    padding: 9px 12px;
-    border-radius: 8px;
-    font-size: 13.5px;
-    font-family: 'Inter', sans-serif;
-  }
-  .controls select {
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    color: var(--text);
-    padding: 9px 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-  }
-  .chip-group { display: flex; gap: 6px; }
-  .chip {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    padding: 7px 11px;
-    border-radius: 20px;
-    border: 1px solid var(--line);
-    background: var(--panel-2);
-    color: var(--muted);
-    cursor: pointer;
-    user-select: none;
-    transition: all .15s ease;
-  }
-  .chip:hover { border-color: var(--muted-2); color: var(--text); }
-  .chip.active { color: var(--bg); font-weight: 700; }
-  .chip.active[data-v="E"] { background: var(--green); border-color: var(--green); }
-  .chip.active[data-v="M"] { background: var(--amber); border-color: var(--amber); }
-  .chip.active[data-v="H"] { background: var(--rose); border-color: var(--rose); }
-  .chip.active[data-v="all"] { background: var(--teal); border-color: var(--teal); }
-  .chip.active[data-v="unsolved"] { background: var(--violet); border-color: var(--violet); }
-  .chip.active[data-v="solved"] { background: var(--teal); border-color: var(--teal); }
-  #resetBtn {
-    margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    color: var(--muted);
-    background: none;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-  #resetBtn:hover { color: var(--rose); border-color: var(--rose); }
-
-  /* ---------- Topic sections ---------- */
-  .topic {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  .topic-head {
-    display: flex; align-items: center; gap: 14px;
-    padding: 16px 18px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .topic-head:hover { background: rgba(255,255,255,0.015); }
-  .topic-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted-2);
-    min-width: 26px;
-  }
-  .topic-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; flex: 1; }
-  .topic-count { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-  .topic-bar {
-    width: 90px; height: 6px; border-radius: 4px; background: var(--panel-2);
-    border: 1px solid var(--line); overflow: hidden;
-  }
-  .topic-bar-inner { height: 100%; background: var(--teal); width: 0%; }
-  .caret { color: var(--muted); transition: transform .2s ease; font-size: 12px; }
-  .topic.open .caret { transform: rotate(90deg); }
-
-  .topic-body { display: none; border-top: 1px solid var(--line); }
-  .topic.open .topic-body { display: block; }
-
-  .prow {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 18px;
-    border-bottom: 1px solid var(--line);
-    font-size: 13.5px;
-  }
-  .prow:last-child { border-bottom: none; }
-  .prow:hover { background: rgba(255,255,255,0.02); }
-  .prow.done .ptitle { color: var(--muted-2); text-decoration: line-through; }
-  .prow input[type="checkbox"] {
-    width: 17px; height: 17px; accent-color: var(--teal); cursor: pointer; flex-shrink: 0;
-  }
-  .ptitle { flex: 1; color: var(--text); text-decoration: none; }
-  .ptitle:hover { color: var(--teal); }
-  .ppattern {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    color: var(--muted);
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    padding: 3px 8px;
-    border-radius: 5px;
-    white-space: nowrap;
-  }
-  .pdiff {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 5px;
-    width: 15px; text-align: center;
-  }
-  .pdiff.E { color: var(--green); background: rgba(52,211,153,0.1); }
-  .pdiff.M { color: var(--amber); background: rgba(245,165,36,0.1); }
-  .pdiff.H { color: var(--rose); background: rgba(251,113,133,0.1); }
-  .plink { color: var(--muted); flex-shrink: 0; }
-  .plink:hover { color: var(--teal); }
-  .psol {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--violet);
-    text-decoration: none;
-    border: 1px solid var(--violet);
-    padding: 3px 8px;
-    border-radius: 4px;
-    flex-shrink: 0;
-    transition: all .15s ease;
-  }
-  .psol:hover { color: var(--bg); background: var(--violet); }
-
-  .empty-msg { padding: 40px; text-align: center; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-
-  /* ---------- Resources ---------- */
-  .resources {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 22px 24px;
-    margin-top: 24px;
-  }
-  .resources h2 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
-    margin: 0 0 14px;
-    color: var(--teal);
-  }
-  .res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-  .res-card {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 16px;
-    background: var(--panel-2);
-  }
-  .res-card h3 { font-size: 13.5px; margin: 0 0 6px; font-family: 'JetBrains Mono', monospace; color: var(--text); }
-  .res-card ul { margin: 0; padding-left: 18px; }
-  .res-card li { font-size: 12.5px; color: var(--muted); margin-bottom: 5px; line-height: 1.4; }
-  .res-card a { color: var(--teal); text-decoration: none; }
-  .res-card a:hover { text-decoration: underline; }
-
-  footer { text-align: center; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 30px; }
-
-  @media (max-width: 640px) {
-    .stat-row { gap: 8px; }
-    .stat-card { min-width: 90px; padding: 10px 12px; }
-    .stat-card .n { font-size: 19px; }
-    .controls { position: static; }
-    .ppattern { display: none; }
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header>
-    <p class="eyebrow">// data structures &amp; algorithms</p>
-    <h1>DSA Mastery Blueprint</h1>
-    <p class="sub">Every data structure, every core algorithm, every recurring interview pattern — organized into one build-through checklist. Check items off as you solve them; your progress is saved automatically in this file.</p>
-    <div class="stat-row">
-      <div class="stat-card total"><div class="n" id="statTotal">0</div><div class="l">Total Problems</div></div>
-      <div class="stat-card"><div class="n" id="statSolved">0</div><div class="l">Solved</div></div>
-      <div class="stat-card easy"><div class="n" id="statEasy">0</div><div class="l">Easy</div></div>
-      <div class="stat-card medium"><div class="n" id="statMedium">0</div><div class="l">Medium</div></div>
-      <div class="stat-card hard"><div class="n" id="statHard">0</div><div class="l">Hard</div></div>
-    </div>
-    <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
-    <div class="progress-label" id="progressLabel">0 / 0 solved &middot; 0%</div>
-  </header>
-
-  <div class="controls">
-    <input type="text" id="searchBox" placeholder="Search problems, patterns, topics...">
-    <select id="topicFilter"><option value="all">All topics</option></select>
-    <select id="patternFilter"><option value="all">All patterns</option></select>
-    <div class="chip-group" id="diffChips">
-      <div class="chip active" data-v="all">All</div>
-      <div class="chip" data-v="E">Easy</div>
-      <div class="chip" data-v="M">Medium</div>
-      <div class="chip" data-v="H">Hard</div>
-    </div>
-    <div class="chip-group" id="statusChips">
-      <div class="chip active" data-v="all">All</div>
-      <div class="chip" data-v="unsolved">Unsolved</div>
-      <div class="chip" data-v="solved">Solved</div>
-    </div>
-    <button id="resetBtn">Reset progress</button>
-  </div>
-
-  <div id="topicsContainer"></div>
-
-  <div class="resources">
-    <h2>// Reference &amp; Practice Resources</h2>
-    <div class="res-grid">
-      <div class="res-card">
-        <h3>Practice Platforms</h3>
-        <ul>
-          <li><a href="https://leetcode.com/" target="_blank">LeetCode</a> — primary problem bank used throughout this plan</li>
-          <li><a href="https://neetcode.io/practice" target="_blank">NeetCode 150 / All</a> — curated pattern-based lists with free video explanations</li>
-          <li><a href="https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/" target="_blank">GeeksforGeeks DSA Tutorial</a> — theory + implementation reference for every topic below</li>
-          <li><a href="https://cses.fi/problemset/" target="_blank">CSES Problem Set</a> — deeper algorithmic problems once patterns feel comfortable</li>
-        </ul>
-      </div>
-      <div class="res-card">
-        <h3>Structured Courses</h3>
-        <ul>
-          <li><a href="https://neetcode.io/courses" target="_blank">NeetCode DSA Course</a> — video walkthroughs mapped to this exact pattern list</li>
-          <li><a href="https://www.coursera.org/specializations/data-structures-algorithms" target="_blank">UCSD/HSE: Data Structures &amp; Algorithms Specialization (Coursera)</a></li>
-          <li><a href="https://www.educative.io/courses/grokking-coding-interview-patterns" target="_blank">Grokking the Coding Interview: Patterns</a> — the source of most pattern names used here</li>
-        </ul>
-      </div>
-      <div class="res-card">
-        <h3>Books</h3>
-        <ul>
-          <li>CLRS — <em>Introduction to Algorithms</em> (theory reference for every algorithm here)</li>
-          <li>Gayle Laakmann McDowell — <em>Cracking the Coding Interview</em></li>
-          <li>Narasimha Karumanchi — <em>Data Structures and Algorithms Made Easy</em></li>
-        </ul>
-      </div>
-      <div class="res-card">
-        <h3>Visualizers</h3>
-        <ul>
-          <li><a href="https://visualgo.net/en" target="_blank">VisuAlgo</a> — animated visualizations for nearly every structure/algorithm in this plan</li>
-          <li><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank">USFCA Data Structure Visualizations</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <footer>Progress is stored locally to this artifact &middot; DSA Mastery Blueprint</footer>
-</div>
-
-<script>
-const PROBLEMS = [{"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number", "diff": "E", "url": "https://leetcode.com/problems/single-number/", "id": 0}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number II", "diff": "M", "url": "https://leetcode.com/problems/single-number-ii/", "id": 1}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number III", "diff": "M", "url": "https://leetcode.com/problems/single-number-iii/", "id": 2}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Number of 1 Bits", "diff": "E", "url": "https://leetcode.com/problems/number-of-1-bits/", "id": 3}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Counting Bits", "diff": "E", "url": "https://leetcode.com/problems/counting-bits/", "id": 4}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Reverse Bits", "diff": "E", "url": "https://leetcode.com/problems/reverse-bits/", "id": 5}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Missing Number", "diff": "E", "url": "https://leetcode.com/problems/missing-number/", "id": 6}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Sum of Two Integers", "diff": "M", "url": "https://leetcode.com/problems/sum-of-two-integers/", "id": 7}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Bitwise AND of Numbers Range", "diff": "M", "url": "https://leetcode.com/problems/bitwise-and-of-numbers-range/", "id": 8}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Two", "diff": "E", "url": "https://leetcode.com/problems/power-of-two/", "id": 9}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Three", "diff": "E", "url": "https://leetcode.com/problems/power-of-three/", "id": 10}, {"topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Four", "diff": "E", "url": "https://leetcode.com/problems/power-of-four/", "id": 11}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Pow(x, n)", "diff": "M", "url": "https://leetcode.com/problems/powx-n/", "id": 12}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Sqrt(x)", "diff": "E", "url": "https://leetcode.com/problems/sqrtx/", "id": 13}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Divide Two Integers", "diff": "M", "url": "https://leetcode.com/problems/divide-two-integers/", "id": 14}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Roman to Integer", "diff": "E", "url": "https://leetcode.com/problems/roman-to-integer/", "id": 15}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Integer to Roman", "diff": "M", "url": "https://leetcode.com/problems/integer-to-roman/", "id": 16}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Happy Number", "diff": "E", "url": "https://leetcode.com/problems/happy-number/", "id": 17}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Excel Sheet Column Number", "diff": "E", "url": "https://leetcode.com/problems/excel-sheet-column-number/", "id": 18}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Excel Sheet Column Title", "diff": "E", "url": "https://leetcode.com/problems/excel-sheet-column-title/", "id": 19}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Factorial Trailing Zeroes", "diff": "M", "url": "https://leetcode.com/problems/factorial-trailing-zeroes/", "id": 20}, {"topic": "Math & Bit Manipulation", "pattern": "Number Theory", "title": "Count Primes", "diff": "M", "url": "https://leetcode.com/problems/count-primes/", "id": 21}, {"topic": "Math & Bit Manipulation", "pattern": "Number Theory", "title": "Greatest Common Divisor of Strings", "diff": "E", "url": "https://leetcode.com/problems/greatest-common-divisor-of-strings/", "id": 22}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Fraction to Recurring Decimal", "diff": "M", "url": "https://leetcode.com/problems/fraction-to-recurring-decimal/", "id": 23}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Multiply Strings", "diff": "M", "url": "https://leetcode.com/problems/multiply-strings/", "id": 24}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Basic Calculator", "diff": "H", "url": "https://leetcode.com/problems/basic-calculator/", "id": 25}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Basic Calculator II", "diff": "M", "url": "https://leetcode.com/problems/basic-calculator-ii/", "id": 26}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Contains Duplicate", "diff": "E", "url": "https://leetcode.com/problems/contains-duplicate/", "id": 27}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Concatenation of Array", "diff": "E", "url": "https://leetcode.com/problems/concatenation-of-array/", "id": 28}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Replace Elements with Greatest Element on Right Side", "diff": "E", "url": "https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/", "id": 29}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Is Subsequence", "diff": "E", "url": "https://leetcode.com/problems/is-subsequence/", "id": 30}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Length of Last Word", "diff": "E", "url": "https://leetcode.com/problems/length-of-last-word/", "id": 31}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Majority Element", "diff": "E", "url": "https://leetcode.com/problems/majority-element/", "id": 32}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Majority Element II", "diff": "M", "url": "https://leetcode.com/problems/majority-element-ii/", "id": 33}, {"topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Find Pivot Index", "diff": "E", "url": "https://leetcode.com/problems/find-pivot-index/", "id": 34}, {"topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Product of Array Except Self", "diff": "M", "url": "https://leetcode.com/problems/product-of-array-except-self/", "id": 35}, {"topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Subarray Sum Equals K", "diff": "M", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "id": 36}, {"topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Continuous Subarray Sum", "diff": "M", "url": "https://leetcode.com/problems/continuous-subarray-sum/", "id": 37}, {"topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Range Sum Query - Immutable", "diff": "E", "url": "https://leetcode.com/problems/range-sum-query-immutable/", "id": 38}, {"topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-subarray/", "id": 39}, {"topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Product Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-product-subarray/", "id": 40}, {"topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Sum Circular Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/", "id": 41}, {"topic": "Arrays & Strings", "pattern": "Array Rotation", "title": "Rotate Array", "diff": "M", "url": "https://leetcode.com/problems/rotate-array/", "id": 42}, {"topic": "Arrays & Strings", "pattern": "Array Rotation", "title": "Rotate Image", "diff": "M", "url": "https://leetcode.com/problems/rotate-image/", "id": 43}, {"topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Missing Number", "diff": "E", "url": "https://leetcode.com/problems/missing-number/", "id": 44}, {"topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Find All Numbers Disappeared in an Array", "diff": "E", "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/", "id": 45}, {"topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Find All Duplicates in an Array", "diff": "M", "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/", "id": 46}, {"topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "First Missing Positive", "diff": "H", "url": "https://leetcode.com/problems/first-missing-positive/", "id": 47}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Best Time to Buy and Sell Stock", "diff": "E", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "id": 48}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Best Time to Buy and Sell Stock II", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", "id": 49}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Jump Game", "diff": "M", "url": "https://leetcode.com/problems/jump-game/", "id": 50}, {"topic": "Arrays & Strings", "pattern": "Greedy", "title": "Jump Game II", "diff": "M", "url": "https://leetcode.com/problems/jump-game-ii/", "id": 51}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Gas Station", "diff": "M", "url": "https://leetcode.com/problems/gas-station/", "id": 52}, {"topic": "Arrays & Strings", "pattern": "Matrix", "title": "Spiral Matrix", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix/", "id": 53}, {"topic": "Arrays & Strings", "pattern": "Matrix", "title": "Set Matrix Zeroes", "diff": "M", "url": "https://leetcode.com/problems/set-matrix-zeroes/", "id": 54}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Valid Anagram", "diff": "E", "url": "https://leetcode.com/problems/valid-anagram/", "id": 55}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Valid Palindrome", "diff": "E", "url": "https://leetcode.com/problems/valid-palindrome/", "id": 56}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Reverse String", "diff": "E", "url": "https://leetcode.com/problems/reverse-string/", "id": 57}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Reverse Words in a String", "diff": "M", "url": "https://leetcode.com/problems/reverse-words-in-a-string/", "id": 58}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "String to Integer (atoi)", "diff": "M", "url": "https://leetcode.com/problems/string-to-integer-atoi/", "id": 59}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Group Anagrams", "diff": "M", "url": "https://leetcode.com/problems/group-anagrams/", "id": 60}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Longest Common Prefix", "diff": "E", "url": "https://leetcode.com/problems/longest-common-prefix/", "id": 61}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Zigzag Conversion", "diff": "M", "url": "https://leetcode.com/problems/zigzag-conversion/", "id": 62}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Count and Say", "diff": "M", "url": "https://leetcode.com/problems/count-and-say/", "id": 63}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Ransom Note", "diff": "E", "url": "https://leetcode.com/problems/ransom-note/", "id": 64}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Isomorphic Strings", "diff": "E", "url": "https://leetcode.com/problems/isomorphic-strings/", "id": 65}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Word Pattern", "diff": "E", "url": "https://leetcode.com/problems/word-pattern/", "id": 66}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Merge Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/merge-sorted-array/", "id": 67}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Remove Duplicates from Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/", "id": 68}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Remove Element", "diff": "E", "url": "https://leetcode.com/problems/remove-element/", "id": 69}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Next Permutation", "diff": "M", "url": "https://leetcode.com/problems/next-permutation/", "id": 70}, {"topic": "Arrays & Strings", "pattern": "Array Basics", "title": "H-Index", "diff": "M", "url": "https://leetcode.com/problems/h-index/", "id": 71}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Two Sum", "diff": "E", "url": "https://leetcode.com/problems/two-sum/", "id": 72}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Longest Consecutive Sequence", "diff": "M", "url": "https://leetcode.com/problems/longest-consecutive-sequence/", "id": 73}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Top K Frequent Elements", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-elements/", "id": 74}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Encode and Decode Strings", "diff": "M", "url": "https://leetcode.com/problems/encode-and-decode-strings/", "id": 75}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Subarray Sum Equals K", "diff": "M", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "id": 76}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "4Sum II", "diff": "M", "url": "https://leetcode.com/problems/4sum-ii/", "id": 77}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Insert Delete GetRandom O(1)", "diff": "M", "url": "https://leetcode.com/problems/insert-delete-getrandom-o1/", "id": 78}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Design HashMap", "diff": "E", "url": "https://leetcode.com/problems/design-hashmap/", "id": 79}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Design HashSet", "diff": "E", "url": "https://leetcode.com/problems/design-hashset/", "id": 80}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "First Unique Character in a String", "diff": "E", "url": "https://leetcode.com/problems/first-unique-character-in-a-string/", "id": 81}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Longest Substring Without Repeating Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/", "id": 82}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Two Sum II - Input Array Is Sorted", "diff": "M", "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", "id": 83}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "3Sum", "diff": "M", "url": "https://leetcode.com/problems/3sum/", "id": 84}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "4Sum", "diff": "M", "url": "https://leetcode.com/problems/4sum/", "id": 85}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Contains Duplicate II", "diff": "E", "url": "https://leetcode.com/problems/contains-duplicate-ii/", "id": 86}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Determine if Two Strings Are Close", "diff": "M", "url": "https://leetcode.com/problems/determine-if-two-strings-are-close/", "id": 87}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Sort Characters By Frequency", "diff": "M", "url": "https://leetcode.com/problems/sort-characters-by-frequency/", "id": 88}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Find the Duplicate Number", "diff": "M", "url": "https://leetcode.com/problems/find-the-duplicate-number/", "id": 89}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Isomorphic Strings", "diff": "E", "url": "https://leetcode.com/problems/isomorphic-strings/", "id": 90}, {"topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Word Pattern", "diff": "E", "url": "https://leetcode.com/problems/word-pattern/", "id": 91}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Valid Palindrome", "diff": "E", "url": "https://leetcode.com/problems/valid-palindrome/", "id": 92}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Two Sum II - Input Array Is Sorted", "diff": "M", "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", "id": 93}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "3Sum", "diff": "M", "url": "https://leetcode.com/problems/3sum/", "id": 94}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "3Sum Closest", "diff": "M", "url": "https://leetcode.com/problems/3sum-closest/", "id": 95}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Container With Most Water", "diff": "M", "url": "https://leetcode.com/problems/container-with-most-water/", "id": 96}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Trapping Rain Water", "diff": "H", "url": "https://leetcode.com/problems/trapping-rain-water/", "id": 97}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Sort Colors", "diff": "M", "url": "https://leetcode.com/problems/sort-colors/", "id": 98}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Move Zeroes", "diff": "E", "url": "https://leetcode.com/problems/move-zeroes/", "id": 99}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Remove Duplicates from Sorted Array II", "diff": "M", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/", "id": 100}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Boats to Save People", "diff": "M", "url": "https://leetcode.com/problems/boats-to-save-people/", "id": 101}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Squares of a Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/squares-of-a-sorted-array/", "id": 102}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Backspace String Compare", "diff": "E", "url": "https://leetcode.com/problems/backspace-string-compare/", "id": 103}, {"topic": "Two Pointers", "pattern": "Two Pointers", "title": "Merge Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/merge-sorted-array/", "id": 104}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Linked List Cycle", "diff": "E", "url": "https://leetcode.com/problems/linked-list-cycle/", "id": 105}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Linked List Cycle II", "diff": "M", "url": "https://leetcode.com/problems/linked-list-cycle-ii/", "id": 106}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Happy Number", "diff": "E", "url": "https://leetcode.com/problems/happy-number/", "id": 107}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Middle of the Linked List", "diff": "E", "url": "https://leetcode.com/problems/middle-of-the-linked-list/", "id": 108}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Find the Duplicate Number", "diff": "M", "url": "https://leetcode.com/problems/find-the-duplicate-number/", "id": 109}, {"topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Palindrome Linked List", "diff": "E", "url": "https://leetcode.com/problems/palindrome-linked-list/", "id": 110}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Best Time to Buy and Sell Stock", "diff": "E", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "id": 111}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Substring Without Repeating Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/", "id": 112}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Repeating Character Replacement", "diff": "M", "url": "https://leetcode.com/problems/longest-repeating-character-replacement/", "id": 113}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Permutation in String", "diff": "M", "url": "https://leetcode.com/problems/permutation-in-string/", "id": 114}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Minimum Window Substring", "diff": "H", "url": "https://leetcode.com/problems/minimum-window-substring/", "id": 115}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Sliding Window Maximum", "diff": "H", "url": "https://leetcode.com/problems/sliding-window-maximum/", "id": 116}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Find All Anagrams in a String", "diff": "M", "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string/", "id": 117}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Fruit Into Baskets", "diff": "M", "url": "https://leetcode.com/problems/fruit-into-baskets/", "id": 118}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Max Consecutive Ones III", "diff": "M", "url": "https://leetcode.com/problems/max-consecutive-ones-iii/", "id": 119}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Minimum Size Subarray Sum", "diff": "M", "url": "https://leetcode.com/problems/minimum-size-subarray-sum/", "id": 120}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Subarrays with K Different Integers", "diff": "H", "url": "https://leetcode.com/problems/subarrays-with-k-different-integers/", "id": 121}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Substring with At Most K Distinct Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/", "id": 122}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Frequency of the Most Frequent Element", "diff": "M", "url": "https://leetcode.com/problems/frequency-of-the-most-frequent-element/", "id": 123}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Maximum Points You Can Obtain from Cards", "diff": "M", "url": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/", "id": 124}, {"topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Subarray of 1's After Deleting One Element", "diff": "M", "url": "https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/", "id": 125}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge Sort (implement)", "diff": "M", "url": "https://www.geeksforgeeks.org/merge-sort/", "id": 126}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Quick Sort (implement)", "diff": "M", "url": "https://www.geeksforgeeks.org/quick-sort-algorithm/", "id": 127}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Sort an Array", "diff": "M", "url": "https://leetcode.com/problems/sort-an-array/", "id": 128}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 129}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Largest Number", "diff": "M", "url": "https://leetcode.com/problems/largest-number/", "id": 130}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Sort Colors", "diff": "M", "url": "https://leetcode.com/problems/sort-colors/", "id": 131}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Kth Largest Element in an Array", "diff": "M", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/", "id": 132}, {"topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 133}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Binary Search", "diff": "E", "url": "https://leetcode.com/problems/binary-search/", "id": 134}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search Insert Position", "diff": "E", "url": "https://leetcode.com/problems/search-insert-position/", "id": 135}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find First and Last Position of Element in Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/", "id": 136}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search in Rotated Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/", "id": 137}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search in Rotated Sorted Array II", "diff": "M", "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/", "id": 138}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find Minimum in Rotated Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/", "id": 139}, {"topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find Peak Element", "diff": "M", "url": "https://leetcode.com/problems/find-peak-element/", "id": 140}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Median of Two Sorted Arrays", "diff": "H", "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/", "id": 141}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Koko Eating Bananas", "diff": "M", "url": "https://leetcode.com/problems/koko-eating-bananas/", "id": 142}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Capacity To Ship Packages Within D Days", "diff": "M", "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/", "id": 143}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Split Array Largest Sum", "diff": "H", "url": "https://leetcode.com/problems/split-array-largest-sum/", "id": 144}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Find K Closest Elements", "diff": "M", "url": "https://leetcode.com/problems/find-k-closest-elements/", "id": 145}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Search a 2D Matrix", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix/", "id": 146}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Search a 2D Matrix II", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/", "id": 147}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Time Based Key-Value Store", "diff": "M", "url": "https://leetcode.com/problems/time-based-key-value-store/", "id": 148}, {"topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Peak Index in a Mountain Array", "diff": "M", "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/", "id": 149}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Valid Parentheses", "diff": "E", "url": "https://leetcode.com/problems/valid-parentheses/", "id": 150}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Min Stack", "diff": "M", "url": "https://leetcode.com/problems/min-stack/", "id": 151}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Evaluate Reverse Polish Notation", "diff": "M", "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/", "id": 152}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Generate Parentheses", "diff": "M", "url": "https://leetcode.com/problems/generate-parentheses/", "id": 153}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Baseball Game", "diff": "E", "url": "https://leetcode.com/problems/baseball-game/", "id": 154}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Daily Temperatures", "diff": "M", "url": "https://leetcode.com/problems/daily-temperatures/", "id": 155}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Next Greater Element I", "diff": "E", "url": "https://leetcode.com/problems/next-greater-element-i/", "id": 156}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Next Greater Element II", "diff": "M", "url": "https://leetcode.com/problems/next-greater-element-ii/", "id": 157}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Largest Rectangle in Histogram", "diff": "H", "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/", "id": 158}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Maximal Rectangle", "diff": "H", "url": "https://leetcode.com/problems/maximal-rectangle/", "id": 159}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Online Stock Span", "diff": "M", "url": "https://leetcode.com/problems/online-stock-span/", "id": 160}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Remove K Digits", "diff": "M", "url": "https://leetcode.com/problems/remove-k-digits/", "id": 161}, {"topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "132 Pattern", "diff": "M", "url": "https://leetcode.com/problems/132-pattern/", "id": 162}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Simplify Path", "diff": "M", "url": "https://leetcode.com/problems/simplify-path/", "id": 163}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Decode String", "diff": "M", "url": "https://leetcode.com/problems/decode-string/", "id": 164}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Basic Calculator II", "diff": "M", "url": "https://leetcode.com/problems/basic-calculator-ii/", "id": 165}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Asteroid Collision", "diff": "M", "url": "https://leetcode.com/problems/asteroid-collision/", "id": 166}, {"topic": "Stacks & Queues", "pattern": "Queue", "title": "Implement Queue using Stacks", "diff": "E", "url": "https://leetcode.com/problems/implement-queue-using-stacks/", "id": 167}, {"topic": "Stacks & Queues", "pattern": "Queue", "title": "Implement Stack using Queues", "diff": "E", "url": "https://leetcode.com/problems/implement-stack-using-queues/", "id": 168}, {"topic": "Stacks & Queues", "pattern": "Queue", "title": "Design Circular Queue", "diff": "M", "url": "https://leetcode.com/problems/design-circular-queue/", "id": 169}, {"topic": "Stacks & Queues", "pattern": "Monotonic Queue", "title": "Sliding Window Maximum", "diff": "H", "url": "https://leetcode.com/problems/sliding-window-maximum/", "id": 170}, {"topic": "Linked List", "pattern": "Linked List", "title": "Reverse Linked List", "diff": "E", "url": "https://leetcode.com/problems/reverse-linked-list/", "id": 171}, {"topic": "Linked List", "pattern": "Linked List", "title": "Reverse Linked List II", "diff": "M", "url": "https://leetcode.com/problems/reverse-linked-list-ii/", "id": 172}, {"topic": "Linked List", "pattern": "Linked List", "title": "Merge Two Sorted Lists", "diff": "E", "url": "https://leetcode.com/problems/merge-two-sorted-lists/", "id": 173}, {"topic": "Linked List", "pattern": "Linked List", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 174}, {"topic": "Linked List", "pattern": "Linked List", "title": "Remove Nth Node From End of List", "diff": "M", "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", "id": 175}, {"topic": "Linked List", "pattern": "Linked List", "title": "Reorder List", "diff": "M", "url": "https://leetcode.com/problems/reorder-list/", "id": 176}, {"topic": "Linked List", "pattern": "Linked List", "title": "Linked List Cycle", "diff": "E", "url": "https://leetcode.com/problems/linked-list-cycle/", "id": 177}, {"topic": "Linked List", "pattern": "Linked List", "title": "Linked List Cycle II", "diff": "M", "url": "https://leetcode.com/problems/linked-list-cycle-ii/", "id": 178}, {"topic": "Linked List", "pattern": "Linked List", "title": "Copy List with Random Pointer", "diff": "M", "url": "https://leetcode.com/problems/copy-list-with-random-pointer/", "id": 179}, {"topic": "Linked List", "pattern": "Linked List", "title": "Add Two Numbers", "diff": "M", "url": "https://leetcode.com/problems/add-two-numbers/", "id": 180}, {"topic": "Linked List", "pattern": "Linked List", "title": "Add Two Numbers II", "diff": "M", "url": "https://leetcode.com/problems/add-two-numbers-ii/", "id": 181}, {"topic": "Linked List", "pattern": "Linked List", "title": "Palindrome Linked List", "diff": "E", "url": "https://leetcode.com/problems/palindrome-linked-list/", "id": 182}, {"topic": "Linked List", "pattern": "Linked List", "title": "Flatten a Multilevel Doubly Linked List", "diff": "M", "url": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/", "id": 183}, {"topic": "Linked List", "pattern": "Linked List", "title": "Rotate List", "diff": "M", "url": "https://leetcode.com/problems/rotate-list/", "id": 184}, {"topic": "Linked List", "pattern": "Linked List", "title": "Swap Nodes in Pairs", "diff": "M", "url": "https://leetcode.com/problems/swap-nodes-in-pairs/", "id": 185}, {"topic": "Linked List", "pattern": "Linked List", "title": "Reverse Nodes in k-Group", "diff": "H", "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/", "id": 186}, {"topic": "Linked List", "pattern": "Linked List", "title": "Odd Even Linked List", "diff": "M", "url": "https://leetcode.com/problems/odd-even-linked-list/", "id": 187}, {"topic": "Linked List", "pattern": "Linked List", "title": "Partition List", "diff": "M", "url": "https://leetcode.com/problems/partition-list/", "id": 188}, {"topic": "Linked List", "pattern": "Linked List (LRU)", "title": "LRU Cache", "diff": "M", "url": "https://leetcode.com/problems/lru-cache/", "id": 189}, {"topic": "Linked List", "pattern": "Linked List (LFU)", "title": "LFU Cache", "diff": "H", "url": "https://leetcode.com/problems/lfu-cache/", "id": 190}, {"topic": "Linked List", "pattern": "Linked List", "title": "Design Linked List", "diff": "M", "url": "https://leetcode.com/problems/design-linked-list/", "id": 191}, {"topic": "Linked List", "pattern": "Linked List", "title": "Intersection of Two Linked Lists", "diff": "E", "url": "https://leetcode.com/problems/intersection-of-two-linked-lists/", "id": 192}, {"topic": "Linked List", "pattern": "Linked List", "title": "Remove Duplicates from Sorted List", "diff": "E", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/", "id": 193}, {"topic": "Linked List", "pattern": "Linked List", "title": "Remove Duplicates from Sorted List II", "diff": "M", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/", "id": 194}, {"topic": "Linked List", "pattern": "Linked List", "title": "Sort List", "diff": "M", "url": "https://leetcode.com/problems/sort-list/", "id": 195}, {"topic": "Recursion & Backtracking", "pattern": "Subsets Pattern", "title": "Subsets", "diff": "M", "url": "https://leetcode.com/problems/subsets/", "id": 196}, {"topic": "Recursion & Backtracking", "pattern": "Subsets Pattern", "title": "Subsets II", "diff": "M", "url": "https://leetcode.com/problems/subsets-ii/", "id": 197}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Permutations", "diff": "M", "url": "https://leetcode.com/problems/permutations/", "id": 198}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Permutations II", "diff": "M", "url": "https://leetcode.com/problems/permutations-ii/", "id": 199}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combinations", "diff": "M", "url": "https://leetcode.com/problems/combinations/", "id": 200}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum", "diff": "M", "url": "https://leetcode.com/problems/combination-sum/", "id": 201}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum II", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-ii/", "id": 202}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum III", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-iii/", "id": 203}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Word Search", "diff": "M", "url": "https://leetcode.com/problems/word-search/", "id": 204}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Word Search II", "diff": "H", "url": "https://leetcode.com/problems/word-search-ii/", "id": 205}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Palindrome Partitioning", "diff": "M", "url": "https://leetcode.com/problems/palindrome-partitioning/", "id": 206}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "N-Queens", "diff": "H", "url": "https://leetcode.com/problems/n-queens/", "id": 207}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "N-Queens II", "diff": "H", "url": "https://leetcode.com/problems/n-queens-ii/", "id": 208}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Sudoku Solver", "diff": "H", "url": "https://leetcode.com/problems/sudoku-solver/", "id": 209}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Generate Parentheses", "diff": "M", "url": "https://leetcode.com/problems/generate-parentheses/", "id": 210}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Letter Combinations of a Phone Number", "diff": "M", "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/", "id": 211}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Restore IP Addresses", "diff": "M", "url": "https://leetcode.com/problems/restore-ip-addresses/", "id": 212}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Gray Code", "diff": "M", "url": "https://leetcode.com/problems/gray-code/", "id": 213}, {"topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Beautiful Arrangement", "diff": "M", "url": "https://leetcode.com/problems/beautiful-arrangement/", "id": 214}, {"topic": "Recursion & Backtracking", "pattern": "Recursion", "title": "Pow(x, n)", "diff": "M", "url": "https://leetcode.com/problems/powx-n/", "id": 215}, {"topic": "Recursion & Backtracking", "pattern": "Recursion", "title": "Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/climbing-stairs/", "id": 216}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Maximum Depth of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/", "id": 217}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Same Tree", "diff": "E", "url": "https://leetcode.com/problems/same-tree/", "id": 218}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Invert Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/invert-binary-tree/", "id": 219}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Subtree of Another Tree", "diff": "E", "url": "https://leetcode.com/problems/subtree-of-another-tree/", "id": 220}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Diameter of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/diameter-of-binary-tree/", "id": 221}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Balanced Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/balanced-binary-tree/", "id": 222}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Path Sum", "diff": "E", "url": "https://leetcode.com/problems/path-sum/", "id": 223}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Path Sum II", "diff": "M", "url": "https://leetcode.com/problems/path-sum-ii/", "id": 224}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Binary Tree Maximum Path Sum", "diff": "H", "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/", "id": 225}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Sum Root to Leaf Numbers", "diff": "M", "url": "https://leetcode.com/problems/sum-root-to-leaf-numbers/", "id": 226}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Flatten Binary Tree to Linked List", "diff": "M", "url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/", "id": 227}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Count Good Nodes in Binary Tree", "diff": "M", "url": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/", "id": 228}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Level Order Traversal", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/", "id": 229}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Zigzag Level Order Traversal", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/", "id": 230}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Right Side View", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-right-side-view/", "id": 231}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Average of Levels in Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/average-of-levels-in-binary-tree/", "id": 232}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Minimum Depth of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/", "id": 233}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Populating Next Right Pointers in Each Node", "diff": "M", "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/", "id": 234}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Inorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-inorder-traversal/", "id": 235}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Preorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-preorder-traversal/", "id": 236}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Postorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-postorder-traversal/", "id": 237}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Construct Binary Tree from Preorder and Inorder Traversal", "diff": "M", "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/", "id": 238}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Construct Binary Tree from Inorder and Postorder Traversal", "diff": "M", "url": "https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/", "id": 239}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Serialize and Deserialize Binary Tree", "diff": "H", "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/", "id": 240}, {"topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Validate Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/validate-binary-search-tree/", "id": 241}, {"topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Kth Smallest Element in a BST", "diff": "M", "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/", "id": 242}, {"topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Insert into a Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/insert-into-a-binary-search-tree/", "id": 243}, {"topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Delete Node in a BST", "diff": "M", "url": "https://leetcode.com/problems/delete-node-in-a-bst/", "id": 244}, {"topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Lowest Common Ancestor of a Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/", "id": 245}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Lowest Common Ancestor of a Binary Tree", "diff": "M", "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/", "id": 246}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Binary Tree Paths", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-paths/", "id": 247}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Symmetric Tree", "diff": "E", "url": "https://leetcode.com/problems/symmetric-tree/", "id": 248}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Convert Sorted Array to Binary Search Tree", "diff": "E", "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/", "id": 249}, {"topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Vertical Order Traversal of a Binary Tree", "diff": "H", "url": "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/", "id": 250}, {"topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Kth Largest Element in an Array", "diff": "M", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/", "id": 251}, {"topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Kth Largest Element in a Stream", "diff": "E", "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/", "id": 252}, {"topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Top K Frequent Elements", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-elements/", "id": 253}, {"topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Top K Frequent Words", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-words/", "id": 254}, {"topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "K Closest Points to Origin", "diff": "M", "url": "https://leetcode.com/problems/k-closest-points-to-origin/", "id": 255}, {"topic": "Heap / Priority Queue", "pattern": "Two Heaps", "title": "Find Median from Data Stream", "diff": "H", "url": "https://leetcode.com/problems/find-median-from-data-stream/", "id": 256}, {"topic": "Heap / Priority Queue", "pattern": "Two Heaps", "title": "IPO", "diff": "H", "url": "https://leetcode.com/problems/ipo/", "id": 257}, {"topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 258}, {"topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Smallest Range Covering Elements from K Lists", "diff": "H", "url": "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/", "id": 259}, {"topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Kth Smallest Element in a Sorted Matrix", "diff": "M", "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/", "id": 260}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Task Scheduler", "diff": "M", "url": "https://leetcode.com/problems/task-scheduler/", "id": 261}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Reorganize String", "diff": "M", "url": "https://leetcode.com/problems/reorganize-string/", "id": 262}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Last Stone Weight", "diff": "E", "url": "https://leetcode.com/problems/last-stone-weight/", "id": 263}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Design Twitter", "diff": "M", "url": "https://leetcode.com/problems/design-twitter/", "id": 264}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Meeting Rooms II", "diff": "M", "url": "https://leetcode.com/problems/meeting-rooms-ii/", "id": 265}, {"topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Process Tasks Using Servers", "diff": "M", "url": "https://leetcode.com/problems/process-tasks-using-servers/", "id": 266}, {"topic": "Trie", "pattern": "Trie", "title": "Implement Trie (Prefix Tree)", "diff": "M", "url": "https://leetcode.com/problems/implement-trie-prefix-tree/", "id": 267}, {"topic": "Trie", "pattern": "Trie", "title": "Design Add and Search Words Data Structure", "diff": "M", "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/", "id": 268}, {"topic": "Trie", "pattern": "Trie", "title": "Word Search II", "diff": "H", "url": "https://leetcode.com/problems/word-search-ii/", "id": 269}, {"topic": "Trie", "pattern": "Trie", "title": "Replace Words", "diff": "M", "url": "https://leetcode.com/problems/replace-words/", "id": 270}, {"topic": "Trie", "pattern": "Trie", "title": "Longest Word in Dictionary", "diff": "M", "url": "https://leetcode.com/problems/longest-word-in-dictionary/", "id": 271}, {"topic": "Trie", "pattern": "Trie", "title": "Maximum XOR of Two Numbers in an Array", "diff": "M", "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/", "id": 272}, {"topic": "Trie", "pattern": "Trie", "title": "Design Search Autocomplete System", "diff": "H", "url": "https://leetcode.com/problems/design-search-autocomplete-system/", "id": 273}, {"topic": "Trie", "pattern": "Trie", "title": "Palindrome Pairs", "diff": "H", "url": "https://leetcode.com/problems/palindrome-pairs/", "id": 274}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Number of Islands", "diff": "M", "url": "https://leetcode.com/problems/number-of-islands/", "id": 275}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Max Area of Island", "diff": "M", "url": "https://leetcode.com/problems/max-area-of-island/", "id": 276}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Flood Fill", "diff": "E", "url": "https://leetcode.com/problems/flood-fill/", "id": 277}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Clone Graph", "diff": "M", "url": "https://leetcode.com/problems/clone-graph/", "id": 278}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Islands and Treasure (Walls and Gates)", "diff": "M", "url": "https://leetcode.com/problems/walls-and-gates/", "id": 279}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Rotting Oranges", "diff": "M", "url": "https://leetcode.com/problems/rotting-oranges/", "id": 280}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Pacific Atlantic Water Flow", "diff": "M", "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/", "id": 281}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Surrounded Regions", "diff": "M", "url": "https://leetcode.com/problems/surrounded-regions/", "id": 282}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Word Ladder", "diff": "H", "url": "https://leetcode.com/problems/word-ladder/", "id": 283}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Word Ladder II", "diff": "H", "url": "https://leetcode.com/problems/word-ladder-ii/", "id": 284}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "01 Matrix", "diff": "M", "url": "https://leetcode.com/problems/01-matrix/", "id": 285}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "As Far from Land as Possible", "diff": "M", "url": "https://leetcode.com/problems/as-far-from-land-as-possible/", "id": 286}, {"topic": "Graphs", "pattern": "Topological Sort", "title": "Course Schedule", "diff": "M", "url": "https://leetcode.com/problems/course-schedule/", "id": 287}, {"topic": "Graphs", "pattern": "Topological Sort", "title": "Course Schedule II", "diff": "M", "url": "https://leetcode.com/problems/course-schedule-ii/", "id": 288}, {"topic": "Graphs", "pattern": "Topological Sort", "title": "Alien Dictionary", "diff": "H", "url": "https://leetcode.com/problems/alien-dictionary/", "id": 289}, {"topic": "Graphs", "pattern": "Topological Sort", "title": "Sequence Reconstruction", "diff": "M", "url": "https://leetcode.com/problems/sequence-reconstruction/", "id": 290}, {"topic": "Graphs", "pattern": "Topological Sort", "title": "Minimum Height Trees", "diff": "M", "url": "https://leetcode.com/problems/minimum-height-trees/", "id": 291}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Number of Connected Components in an Undirected Graph", "diff": "M", "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/", "id": 292}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Graph Valid Tree", "diff": "M", "url": "https://leetcode.com/problems/graph-valid-tree/", "id": 293}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Redundant Connection", "diff": "M", "url": "https://leetcode.com/problems/redundant-connection/", "id": 294}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Accounts Merge", "diff": "M", "url": "https://leetcode.com/problems/accounts-merge/", "id": 295}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Number of Provinces", "diff": "M", "url": "https://leetcode.com/problems/number-of-provinces/", "id": 296}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Satisfiability of Equality Equations", "diff": "M", "url": "https://leetcode.com/problems/satisfiability-of-equality-equations/", "id": 297}, {"topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Swim in Rising Water", "diff": "H", "url": "https://leetcode.com/problems/swim-in-rising-water/", "id": 298}, {"topic": "Graphs", "pattern": "Shortest Path", "title": "Network Delay Time (Dijkstra)", "diff": "M", "url": "https://leetcode.com/problems/network-delay-time/", "id": 299}, {"topic": "Graphs", "pattern": "Shortest Path", "title": "Cheapest Flights Within K Stops (Bellman-Ford)", "diff": "M", "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/", "id": 300}, {"topic": "Graphs", "pattern": "Shortest Path", "title": "Path with Minimum Effort", "diff": "M", "url": "https://leetcode.com/problems/path-with-minimum-effort/", "id": 301}, {"topic": "Graphs", "pattern": "Shortest Path", "title": "Swim in Rising Water", "diff": "H", "url": "https://leetcode.com/problems/swim-in-rising-water/", "id": 302}, {"topic": "Graphs", "pattern": "Shortest Path", "title": "Find the City With the Smallest Number of Neighbors (Floyd-Warshall)", "diff": "M", "url": "https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/", "id": 303}, {"topic": "Graphs", "pattern": "Minimum Spanning Tree", "title": "Min Cost to Connect All Points (Prim's)", "diff": "M", "url": "https://leetcode.com/problems/min-cost-to-connect-all-points/", "id": 304}, {"topic": "Graphs", "pattern": "Minimum Spanning Tree", "title": "Connecting Cities With Minimum Cost (Kruskal's)", "diff": "M", "url": "https://leetcode.com/problems/connecting-cities-with-minimum-cost/", "id": 305}, {"topic": "Graphs", "pattern": "Graph", "title": "Graph Bipartite Check", "diff": "M", "url": "https://leetcode.com/problems/is-graph-bipartite/", "id": 306}, {"topic": "Graphs", "pattern": "Graph", "title": "Reconstruct Itinerary (Eulerian Path)", "diff": "H", "url": "https://leetcode.com/problems/reconstruct-itinerary/", "id": 307}, {"topic": "Graphs", "pattern": "Graph", "title": "Evaluate Division", "diff": "M", "url": "https://leetcode.com/problems/evaluate-division/", "id": 308}, {"topic": "Graphs", "pattern": "Graph", "title": "Critical Connections in a Network (Bridges)", "diff": "H", "url": "https://leetcode.com/problems/critical-connections-in-a-network/", "id": 309}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/climbing-stairs/", "id": 310}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "House Robber", "diff": "M", "url": "https://leetcode.com/problems/house-robber/", "id": 311}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "House Robber II", "diff": "M", "url": "https://leetcode.com/problems/house-robber-ii/", "id": 312}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Decode Ways", "diff": "M", "url": "https://leetcode.com/problems/decode-ways/", "id": 313}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Coin Change", "diff": "M", "url": "https://leetcode.com/problems/coin-change/", "id": 314}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Coin Change II", "diff": "M", "url": "https://leetcode.com/problems/coin-change-ii/", "id": 315}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Maximum Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-subarray/", "id": 316}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Word Break", "diff": "M", "url": "https://leetcode.com/problems/word-break/", "id": 317}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Longest Increasing Subsequence", "diff": "M", "url": "https://leetcode.com/problems/longest-increasing-subsequence/", "id": 318}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Number of Longest Increasing Subsequence", "diff": "M", "url": "https://leetcode.com/problems/number-of-longest-increasing-subsequence/", "id": 319}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Russian Doll Envelopes", "diff": "H", "url": "https://leetcode.com/problems/russian-doll-envelopes/", "id": 320}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Partition Equal Subset Sum", "diff": "M", "url": "https://leetcode.com/problems/partition-equal-subset-sum/", "id": 321}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Combination Sum IV", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-iv/", "id": 322}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Perfect Squares", "diff": "M", "url": "https://leetcode.com/problems/perfect-squares/", "id": 323}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Integer Break", "diff": "M", "url": "https://leetcode.com/problems/integer-break/", "id": 324}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Min Cost Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/min-cost-climbing-stairs/", "id": 325}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Unique Paths", "diff": "M", "url": "https://leetcode.com/problems/unique-paths/", "id": 326}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Unique Paths II", "diff": "M", "url": "https://leetcode.com/problems/unique-paths-ii/", "id": 327}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Minimum Path Sum", "diff": "M", "url": "https://leetcode.com/problems/minimum-path-sum/", "id": 328}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Longest Common Subsequence", "diff": "M", "url": "https://leetcode.com/problems/longest-common-subsequence/", "id": 329}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Longest Palindromic Substring", "diff": "M", "url": "https://leetcode.com/problems/longest-palindromic-substring/", "id": 330}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Palindromic Substrings", "diff": "M", "url": "https://leetcode.com/problems/palindromic-substrings/", "id": 331}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Edit Distance", "diff": "H", "url": "https://leetcode.com/problems/edit-distance/", "id": 332}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Distinct Subsequences", "diff": "H", "url": "https://leetcode.com/problems/distinct-subsequences/", "id": 333}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Interleaving String", "diff": "M", "url": "https://leetcode.com/problems/interleaving-string/", "id": 334}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Regular Expression Matching", "diff": "H", "url": "https://leetcode.com/problems/regular-expression-matching/", "id": 335}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Wildcard Matching", "diff": "H", "url": "https://leetcode.com/problems/wildcard-matching/", "id": 336}, {"topic": "Dynamic Programming", "pattern": "2D DP", "title": "Maximal Square", "diff": "M", "url": "https://leetcode.com/problems/maximal-square/", "id": 337}, {"topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Partition Equal Subset Sum", "diff": "M", "url": "https://leetcode.com/problems/partition-equal-subset-sum/", "id": 338}, {"topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Target Sum", "diff": "M", "url": "https://leetcode.com/problems/target-sum/", "id": 339}, {"topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Ones and Zeroes", "diff": "M", "url": "https://leetcode.com/problems/ones-and-zeroes/", "id": 340}, {"topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Last Stone Weight II", "diff": "M", "url": "https://leetcode.com/problems/last-stone-weight-ii/", "id": 341}, {"topic": "Dynamic Programming", "pattern": "Unbounded Knapsack", "title": "Coin Change", "diff": "M", "url": "https://leetcode.com/problems/coin-change/", "id": 342}, {"topic": "Dynamic Programming", "pattern": "Unbounded Knapsack", "title": "Coin Change II", "diff": "M", "url": "https://leetcode.com/problems/coin-change-ii/", "id": 343}, {"topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock with Cooldown", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/", "id": 344}, {"topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock III", "diff": "H", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/", "id": 345}, {"topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock IV", "diff": "H", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/", "id": 346}, {"topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock with Transaction Fee", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/", "id": 347}, {"topic": "Dynamic Programming", "pattern": "Interval DP", "title": "Burst Balloons", "diff": "H", "url": "https://leetcode.com/problems/burst-balloons/", "id": 348}, {"topic": "Dynamic Programming", "pattern": "Interval DP", "title": "Matrix Chain Multiplication", "diff": "H", "url": "https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/", "id": 349}, {"topic": "Dynamic Programming", "pattern": "DP on Trees", "title": "House Robber III", "diff": "M", "url": "https://leetcode.com/problems/house-robber-iii/", "id": 350}, {"topic": "Dynamic Programming", "pattern": "DP on Trees", "title": "Binary Tree Maximum Path Sum", "diff": "H", "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/", "id": 351}, {"topic": "Dynamic Programming", "pattern": "DP on Grids", "title": "Dungeon Game", "diff": "H", "url": "https://leetcode.com/problems/dungeon-game/", "id": 352}, {"topic": "Dynamic Programming", "pattern": "DP on Grids", "title": "Cherry Pickup", "diff": "H", "url": "https://leetcode.com/problems/cherry-pickup/", "id": 353}, {"topic": "Dynamic Programming", "pattern": "Bitmask DP", "title": "Partition to K Equal Sum Subsets", "diff": "M", "url": "https://leetcode.com/problems/partition-to-k-equal-sum-subsets/", "id": 354}, {"topic": "Dynamic Programming", "pattern": "Bitmask DP", "title": "Shortest Path Visiting All Nodes", "diff": "H", "url": "https://leetcode.com/problems/shortest-path-visiting-all-nodes/", "id": 355}, {"topic": "Greedy", "pattern": "Greedy", "title": "Jump Game", "diff": "M", "url": "https://leetcode.com/problems/jump-game/", "id": 356}, {"topic": "Greedy", "pattern": "Greedy", "title": "Jump Game II", "diff": "M", "url": "https://leetcode.com/problems/jump-game-ii/", "id": 357}, {"topic": "Greedy", "pattern": "Greedy", "title": "Gas Station", "diff": "M", "url": "https://leetcode.com/problems/gas-station/", "id": 358}, {"topic": "Greedy", "pattern": "Greedy", "title": "Candy", "diff": "H", "url": "https://leetcode.com/problems/candy/", "id": 359}, {"topic": "Greedy", "pattern": "Greedy", "title": "Task Scheduler", "diff": "M", "url": "https://leetcode.com/problems/task-scheduler/", "id": 360}, {"topic": "Greedy", "pattern": "Greedy", "title": "Partition Labels", "diff": "M", "url": "https://leetcode.com/problems/partition-labels/", "id": 361}, {"topic": "Greedy", "pattern": "Greedy", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 362}, {"topic": "Greedy", "pattern": "Greedy", "title": "Non-overlapping Intervals", "diff": "M", "url": "https://leetcode.com/problems/non-overlapping-intervals/", "id": 363}, {"topic": "Greedy", "pattern": "Greedy", "title": "Minimum Number of Arrows to Burst Balloons", "diff": "M", "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/", "id": 364}, {"topic": "Greedy", "pattern": "Greedy", "title": "Queue Reconstruction by Height", "diff": "M", "url": "https://leetcode.com/problems/queue-reconstruction-by-height/", "id": 365}, {"topic": "Greedy", "pattern": "Greedy", "title": "Boats to Save People", "diff": "M", "url": "https://leetcode.com/problems/boats-to-save-people/", "id": 366}, {"topic": "Greedy", "pattern": "Greedy", "title": "Best Time to Buy and Sell Stock II", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", "id": 367}, {"topic": "Greedy", "pattern": "Greedy", "title": "Lemonade Change", "diff": "E", "url": "https://leetcode.com/problems/lemonade-change/", "id": 368}, {"topic": "Greedy", "pattern": "Greedy", "title": "Valid Parenthesis String", "diff": "M", "url": "https://leetcode.com/problems/valid-parenthesis-string/", "id": 369}, {"topic": "Greedy", "pattern": "Greedy", "title": "Minimum Add to Make Parentheses Valid", "diff": "M", "url": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/", "id": 370}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 371}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Insert Interval", "diff": "M", "url": "https://leetcode.com/problems/insert-interval/", "id": 372}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Non-overlapping Intervals", "diff": "M", "url": "https://leetcode.com/problems/non-overlapping-intervals/", "id": 373}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Meeting Rooms", "diff": "E", "url": "https://leetcode.com/problems/meeting-rooms/", "id": 374}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Meeting Rooms II", "diff": "M", "url": "https://leetcode.com/problems/meeting-rooms-ii/", "id": 375}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Minimum Number of Arrows to Burst Balloons", "diff": "M", "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/", "id": 376}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Employee Free Time", "diff": "H", "url": "https://leetcode.com/problems/employee-free-time/", "id": 377}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Interval List Intersections", "diff": "M", "url": "https://leetcode.com/problems/interval-list-intersections/", "id": 378}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "My Calendar I", "diff": "M", "url": "https://leetcode.com/problems/my-calendar-i/", "id": 379}, {"topic": "Intervals", "pattern": "Merge Intervals", "title": "Car Pooling", "diff": "M", "url": "https://leetcode.com/problems/car-pooling/", "id": 380}, {"topic": "Matrix", "pattern": "Matrix", "title": "Rotate Image", "diff": "M", "url": "https://leetcode.com/problems/rotate-image/", "id": 381}, {"topic": "Matrix", "pattern": "Matrix", "title": "Spiral Matrix", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix/", "id": 382}, {"topic": "Matrix", "pattern": "Matrix", "title": "Spiral Matrix II", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix-ii/", "id": 383}, {"topic": "Matrix", "pattern": "Matrix", "title": "Set Matrix Zeroes", "diff": "M", "url": "https://leetcode.com/problems/set-matrix-zeroes/", "id": 384}, {"topic": "Matrix", "pattern": "Matrix", "title": "Word Search", "diff": "M", "url": "https://leetcode.com/problems/word-search/", "id": 385}, {"topic": "Matrix", "pattern": "Matrix", "title": "Number of Islands", "diff": "M", "url": "https://leetcode.com/problems/number-of-islands/", "id": 386}, {"topic": "Matrix", "pattern": "Matrix", "title": "Search a 2D Matrix", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix/", "id": 387}, {"topic": "Matrix", "pattern": "Matrix", "title": "Search a 2D Matrix II", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/", "id": 388}, {"topic": "Matrix", "pattern": "Matrix", "title": "Diagonal Traverse", "diff": "M", "url": "https://leetcode.com/problems/diagonal-traverse/", "id": 389}, {"topic": "Matrix", "pattern": "Matrix", "title": "Game of Life", "diff": "M", "url": "https://leetcode.com/problems/game-of-life/", "id": 390}, {"topic": "Advanced Strings", "pattern": "KMP", "title": "Implement strStr() (KMP)", "diff": "E", "url": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/", "id": 391}, {"topic": "Advanced Strings", "pattern": "KMP", "title": "Shortest Palindrome", "diff": "H", "url": "https://leetcode.com/problems/shortest-palindrome/", "id": 392}, {"topic": "Advanced Strings", "pattern": "Rabin-Karp", "title": "Repeated String Match", "diff": "M", "url": "https://leetcode.com/problems/repeated-string-match/", "id": 393}, {"topic": "Advanced Strings", "pattern": "Z-Algorithm", "title": "Longest Happy Prefix", "diff": "H", "url": "https://leetcode.com/problems/longest-happy-prefix/", "id": 394}, {"topic": "Advanced Strings", "pattern": "Manacher's Algorithm", "title": "Longest Palindromic Substring", "diff": "M", "url": "https://leetcode.com/problems/longest-palindromic-substring/", "id": 395}, {"topic": "Advanced Strings", "pattern": "String Matching", "title": "Repeated Substring Pattern", "diff": "E", "url": "https://leetcode.com/problems/repeated-substring-pattern/", "id": 396}, {"topic": "Advanced Strings", "pattern": "String Matching", "title": "Minimum Window Substring", "diff": "H", "url": "https://leetcode.com/problems/minimum-window-substring/", "id": 397}, {"topic": "Advanced Strings", "pattern": "String Matching", "title": "Distinct Subsequences", "diff": "H", "url": "https://leetcode.com/problems/distinct-subsequences/", "id": 398}, {"topic": "Advanced Data Structures", "pattern": "Union-Find (DSU)", "title": "Redundant Connection", "diff": "M", "url": "https://leetcode.com/problems/redundant-connection/", "id": 399}, {"topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Range Sum Query - Mutable", "diff": "M", "url": "https://leetcode.com/problems/range-sum-query-mutable/", "id": 400}, {"topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Range Sum Query 2D - Immutable", "diff": "M", "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/", "id": 401}, {"topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Count of Smaller Numbers After Self", "diff": "H", "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/", "id": 402}, {"topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "The Skyline Problem", "diff": "H", "url": "https://leetcode.com/problems/the-skyline-problem/", "id": 403}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "LRU Cache", "diff": "M", "url": "https://leetcode.com/problems/lru-cache/", "id": 404}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "LFU Cache", "diff": "H", "url": "https://leetcode.com/problems/lfu-cache/", "id": 405}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Design Twitter", "diff": "M", "url": "https://leetcode.com/problems/design-twitter/", "id": 406}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Insert Delete GetRandom O(1)", "diff": "M", "url": "https://leetcode.com/problems/insert-delete-getrandom-o1/", "id": 407}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Design Underground System", "diff": "M", "url": "https://leetcode.com/problems/design-underground-system/", "id": 408}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Design a Leaderboard", "diff": "M", "url": "https://leetcode.com/problems/design-a-leaderboard/", "id": 409}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Min Stack", "diff": "M", "url": "https://leetcode.com/problems/min-stack/", "id": 410}, {"topic": "Advanced Data Structures", "pattern": "Design", "title": "Time Based Key-Value Store", "diff": "M", "url": "https://leetcode.com/problems/time-based-key-value-store/", "id": 411}, {"topic": "Advanced Data Structures", "pattern": "Monotonic Stack", "title": "Largest Rectangle in Histogram", "diff": "H", "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/", "id": 412}, {"topic": "Stacks & Queues", "pattern": "Stack", "title": "Longest Valid Parentheses", "diff": "H", "url": "https://leetcode.com/problems/longest-valid-parentheses/", "id": 413}, {"topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Bus Routes", "diff": "H", "url": "https://leetcode.com/problems/bus-routes/", "id": 414}, {"topic": "Dynamic Programming", "pattern": "1D DP", "title": "Frog Jump", "diff": "H", "url": "https://leetcode.com/problems/frog-jump/", "id": 415}, {"topic": "Dynamic Programming", "pattern": "Greedy", "title": "Minimum Number of Refueling Stops", "diff": "H", "url": "https://leetcode.com/problems/minimum-number-of-refueling-stops/", "id": 416}, {"topic": "Arrays & Strings", "pattern": "String Basics", "title": "Text Justification", "diff": "H", "url": "https://leetcode.com/problems/text-justification/", "id": 417}, {"topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Max Points on a Line", "diff": "H", "url": "https://leetcode.com/problems/max-points-on-a-line/", "id": 418}];
-const TOPIC_ORDER = ["Math & Bit Manipulation", "Arrays & Strings", "Hashing (HashMap / HashSet)", "Two Pointers", "Sliding Window", "Sorting & Binary Search", "Stacks & Queues", "Linked List", "Recursion & Backtracking", "Trees (Binary Tree / BST)", "Heap / Priority Queue", "Trie", "Graphs", "Dynamic Programming", "Greedy", "Intervals", "Matrix", "Advanced Strings", "Advanced Data Structures"];
-const STORAGE_KEY = 'dsa-mastery-progress';
-
-let solved = {};
-
-async function loadProgress() {
-  try {
-    const res = await window.storage.get(STORAGE_KEY, false);
-    if (res && res.value) solved = JSON.parse(res.value);
-  } catch (e) { solved = {}; }
-  render();
-}
-
-async function saveProgress() {
-  try { await window.storage.set(STORAGE_KEY, JSON.stringify(solved), false); }
-  catch (e) { console.error('save failed', e); }
-}
-
-function toggleSolved(id) {
-  if (solved[id]) delete solved[id]; else solved[id] = true;
-  saveProgress();
-  render();
-}
-
-async function resetProgress() {
-  if (!confirm('Clear all checked-off progress? This cannot be undone.')) return;
-  solved = {};
-  try { await window.storage.delete(STORAGE_KEY, false); } catch (e) {}
-  render();
-}
-
-// populate filters
-function initFilters() {
-  const topicSel = document.getElementById('topicFilter');
-  TOPIC_ORDER.forEach(t => {
-    const o = document.createElement('option');
-    o.value = t; o.textContent = t;
-    topicSel.appendChild(o);
-  });
-  const patterns = [...new Set(PROBLEMS.map(p => p.pattern))].sort();
-  const patSel = document.getElementById('patternFilter');
-  patterns.forEach(p => {
-    const o = document.createElement('option');
-    o.value = p; o.textContent = p;
-    patSel.appendChild(o);
-  });
-}
-
-let diffFilter = 'all';
-let statusFilter = 'all';
-
-document.getElementById('diffChips').addEventListener('click', e => {
-  if (!e.target.classList.contains('chip')) return;
-  diffFilter = e.target.dataset.v;
-  [...e.currentTarget.children].forEach(c => c.classList.toggle('active', c === e.target));
-  render();
-});
-document.getElementById('statusChips').addEventListener('click', e => {
-  if (!e.target.classList.contains('chip')) return;
-  statusFilter = e.target.dataset.v;
-  [...e.currentTarget.children].forEach(c => c.classList.toggle('active', c === e.target));
-  render();
-});
-document.getElementById('searchBox').addEventListener('input', render);
-document.getElementById('topicFilter').addEventListener('change', render);
-document.getElementById('patternFilter').addEventListener('change', render);
-document.getElementById('resetBtn').addEventListener('click', resetProgress);
-
-const openTopics = new Set();
-
-function render() {
-  const q = document.getElementById('searchBox').value.trim().toLowerCase();
-  const topicF = document.getElementById('topicFilter').value;
-  const patternF = document.getElementById('patternFilter').value;
-
-  let filtered = PROBLEMS.filter(p => {
-    if (topicF !== 'all' && p.topic !== topicF) return false;
-    if (patternF !== 'all' && p.pattern !== patternF) return false;
-    if (diffFilter !== 'all' && p.diff !== diffFilter) return false;
-    const isSolved = !!solved[p.id];
-    if (statusFilter === 'solved' && !isSolved) return false;
-    if (statusFilter === 'unsolved' && isSolved) return false;
-    if (q) {
-      const hay = (p.title + ' ' + p.pattern + ' ' + p.topic).toLowerCase();
-      if (!hay.includes(q)) return false;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSA Mastery Blueprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0f1c;
+      --panel: #111a2e;
+      --panel-2: #0d1526;
+      --line: #1e2b47;
+      --text: #dbe4f3;
+      --muted: #7488ac;
+      --muted-2: #4d5f82;
+      --teal: #2dd4bf;
+      --amber: #f5a524;
+      --rose: #fb7185;
+      --green: #34d399;
+      --violet: #a78bfa;
     }
-    return true;
-  });
 
-  // overall stats (always computed off full set, not filtered)
-  const totalSolved = Object.keys(solved).length;
-  document.getElementById('statTotal').textContent = PROBLEMS.length;
-  document.getElementById('statSolved').textContent = totalSolved;
-  document.getElementById('statEasy').textContent = PROBLEMS.filter(p => p.diff === 'E' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'E').length;
-  document.getElementById('statMedium').textContent = PROBLEMS.filter(p => p.diff === 'M' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'M').length;
-  document.getElementById('statHard').textContent = PROBLEMS.filter(p => p.diff === 'H' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'H').length;
-  const pct = PROBLEMS.length ? Math.round((totalSolved / PROBLEMS.length) * 100) : 0;
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').textContent = totalSolved + ' / ' + PROBLEMS.length + ' solved · ' + pct + '%';
+    * {
+      box-sizing: border-box;
+    }
 
-  const container = document.getElementById('topicsContainer');
-  container.innerHTML = '';
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
 
-  if (filtered.length === 0) {
-    const div = document.createElement('div');
-    div.className = 'empty-msg';
-    div.textContent = 'No problems match these filters.';
-    container.appendChild(div);
-    return;
-  }
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      padding: 28px 18px 80px;
+    }
 
-  TOPIC_ORDER.forEach((topic, idx) => {
-    const items = filtered.filter(p => p.topic === topic);
-    if (items.length === 0) return;
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-    const allInTopic = PROBLEMS.filter(p => p.topic === topic);
-    const solvedInTopic = allInTopic.filter(p => solved[p.id]).length;
-    const topicPct = allInTopic.length ? Math.round((solvedInTopic / allInTopic.length) * 100) : 0;
+    /* ---------- Header ---------- */
+    header {
+      background: linear-gradient(160deg, var(--panel) 0%, var(--panel-2) 100%);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 30px 32px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
 
-    const topicDiv = document.createElement('div');
-    topicDiv.className = 'topic' + (openTopics.has(topic) ? ' open' : '');
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 240px;
+      background: radial-gradient(circle at top right, rgba(45, 212, 191, 0.12), transparent 70%);
+      pointer-events: none;
+    }
 
-    const head = document.createElement('div');
-    head.className = 'topic-head';
-    head.innerHTML = `
-      <span class="topic-num">${String(idx+1).padStart(2,'0')}</span>
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin: 0 0 10px;
+    }
+
+    .streak-box {
+      position: absolute;
+      top: 30px;
+      right: 32px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: center;
+    }
+
+    .streak-flame {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .streak-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--amber);
+      margin-bottom: 4px;
+    }
+
+    .streak-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 800;
+      margin: 0 0 8px;
+      letter-spacing: -0.01em;
+    }
+
+    header p.sub {
+      color: var(--muted);
+      margin: 0 0 22px;
+      max-width: 640px;
+      line-height: 1.55;
+      font-size: 14.5px;
+    }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 18px;
+      min-width: 120px;
+      flex: 1;
+    }
+
+    .stat-card .n {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .stat-card .l {
+      font-size: 11.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .stat-card.easy .n {
+      color: var(--green);
+    }
+
+    .stat-card.medium .n {
+      color: var(--amber);
+    }
+
+    .stat-card.hard .n {
+      color: var(--rose);
+    }
+
+    .stat-card.total .n {
+      color: var(--teal);
+    }
+
+    .progress-outer {
+      margin-top: 18px;
+      height: 10px;
+      border-radius: 6px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .progress-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--green));
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* ---------- Controls ---------- */
+    .controls {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      background: rgba(17, 26, 46, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .controls input[type="text"] {
+      flex: 1 1 220px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .controls select {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .chip-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      padding: 7px 11px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      transition: all .15s ease;
+    }
+
+    .chip:hover {
+      border-color: var(--muted-2);
+      color: var(--text);
+    }
+
+    .chip.active {
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .chip.active[data-v="E"] {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .chip.active[data-v="M"] {
+      background: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .chip.active[data-v="H"] {
+      background: var(--rose);
+      border-color: var(--rose);
+    }
+
+    .chip.active[data-v="all"] {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .chip.active[data-v="unsolved"] {
+      background: var(--violet);
+      border-color: var(--violet);
+    }
+
+    .chip.active[data-v="solved"] {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    #resetBtn {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    #resetBtn:hover {
+      color: var(--rose);
+      border-color: var(--rose);
+    }
+
+    /* ---------- Topic sections ---------- */
+    .topic {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .topic-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .topic-head:hover {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .topic-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted-2);
+      min-width: 26px;
+    }
+
+    .topic-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 15px;
+      flex: 1;
+    }
+
+    .topic-count {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .topic-bar {
+      width: 90px;
+      height: 6px;
+      border-radius: 4px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .topic-bar-inner {
+      height: 100%;
+      background: var(--teal);
+      width: 0%;
+    }
+
+    .caret {
+      color: var(--muted);
+      transition: transform .2s ease;
+      font-size: 12px;
+    }
+
+    .topic.open .caret {
+      transform: rotate(90deg);
+    }
+
+    .topic-body {
+      display: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .topic.open .topic-body {
+      display: block;
+    }
+
+    .prow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13.5px;
+    }
+
+    .prow:last-child {
+      border-bottom: none;
+    }
+
+    .prow:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .prow.done .ptitle {
+      color: var(--muted-2);
+      text-decoration: line-through;
+    }
+
+    .prow input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--teal);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .ptitle {
+      flex: 1;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .ptitle:hover {
+      color: var(--teal);
+    }
+
+    .ppattern {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      padding: 3px 8px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+
+    .pdiff {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 5px;
+      width: 15px;
+      text-align: center;
+    }
+
+    .pdiff.E {
+      color: var(--green);
+      background: rgba(52, 211, 153, 0.1);
+    }
+
+    .pdiff.M {
+      color: var(--amber);
+      background: rgba(245, 165, 36, 0.1);
+    }
+
+    .pdiff.H {
+      color: var(--rose);
+      background: rgba(251, 113, 133, 0.1);
+    }
+
+    .plink {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .plink:hover {
+      color: var(--teal);
+    }
+
+    .psol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--violet);
+      text-decoration: none;
+      border: 1px solid var(--violet);
+      padding: 3px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      transition: all .15s ease;
+    }
+
+    .psol:hover {
+      color: var(--bg);
+      background: var(--violet);
+    }
+
+    .empty-msg {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    /* ---------- Resources ---------- */
+    .resources {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-top: 24px;
+    }
+
+    .resources h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      margin: 0 0 14px;
+      color: var(--teal);
+    }
+
+    .res-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .res-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: var(--panel-2);
+    }
+
+    .res-card h3 {
+      font-size: 13.5px;
+      margin: 0 0 6px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+    }
+
+    .res-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .res-card li {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    .res-card a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    .res-card a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 640px) {
+      .stat-row {
+        gap: 8px;
+      }
+
+      .stat-card {
+        min-width: 90px;
+        padding: 10px 12px;
+      }
+
+      .stat-card .n {
+        font-size: 19px;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .ppattern {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="streak-box">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-label">Day Streak</div>
+      </div>
+      <p class="eyebrow">data structures &amp; algorithms</p>
+      <h1>DSA Mastery Blueprint</h1>
+      <p class="sub">Every data structure, every core algorithm, every recurring interview pattern - organized into one
+        build-through checklist.
+        <br>Check items off as you solve them; your progress is saved automatically in this file.
+      </p>
+      <div class="stat-row">
+        <div class="stat-card total">
+          <div class="n" id="statTotal">0</div>
+          <div class="l">Total Problems</div>
+        </div>
+        <div class="stat-card">
+          <div class="n" id="statSolved">0</div>
+          <div class="l">Solved</div>
+        </div>
+        <div class="stat-card easy">
+          <div class="n" id="statEasy">0</div>
+          <div class="l">Easy</div>
+        </div>
+        <div class="stat-card medium">
+          <div class="n" id="statMedium">0</div>
+          <div class="l">Medium</div>
+        </div>
+        <div class="stat-card hard">
+          <div class="n" id="statHard">0</div>
+          <div class="l">Hard</div>
+        </div>
+      </div>
+      <div class="progress-outer">
+        <div class="progress-inner" id="progressBar"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">0 / 0 solved &middot; 0%</div>
+    </header>
+
+    <div class="controls">
+      <input type="text" id="searchBox" placeholder="Search problems, patterns, topics...">
+      <select id="topicFilter">
+        <option value="all">All topics</option>
+      </select>
+      <select id="patternFilter">
+        <option value="all">All patterns</option>
+      </select>
+      <div class="chip-group" id="diffChips">
+        <div class="chip active" data-v="all">All</div>
+        <div class="chip" data-v="E">Easy</div>
+        <div class="chip" data-v="M">Medium</div>
+        <div class="chip" data-v="H">Hard</div>
+      </div>
+      <div class="chip-group" id="statusChips">
+        <div class="chip active" data-v="all">All</div>
+        <div class="chip" data-v="unsolved">Unsolved</div>
+        <div class="chip" data-v="solved">Solved</div>
+      </div>
+      <button id="resetBtn">Reset progress</button>
+    </div>
+
+    <div id="topicsContainer"></div>
+
+    <div class="resources">
+      <h2>Reference &amp; Practice Resources</h2>
+      <div class="res-grid">
+        <div class="res-card">
+          <h3>Practice Platforms</h3>
+          <ul>
+            <li><a href="https://leetcode.com/" target="_blank">LeetCode</a> — primary problem bank used throughout this
+              plan</li>
+            <li><a href="https://neetcode.io/practice" target="_blank">NeetCode 150 / All</a> — curated pattern-based
+              lists with free video explanations</li>
+            <li><a href="https://www.geeksforgeeks.org/dsa/dsa-tutorial-learn-data-structures-and-algorithms/"
+                target="_blank">GeeksforGeeks DSA Tutorial</a> — theory + implementation reference for every topic below
+            </li>
+            <li><a href="https://cses.fi/problemset/" target="_blank">CSES Problem Set</a> — deeper algorithmic problems
+              once patterns feel comfortable</li>
+          </ul>
+        </div>
+        <div class="res-card">
+          <h3>Structured Courses</h3>
+          <ul>
+            <li><a href="https://neetcode.io/courses" target="_blank">NeetCode DSA Course</a> — video walkthroughs
+              mapped to this exact pattern list</li>
+            <li><a href="https://www.coursera.org/specializations/data-structures-algorithms" target="_blank">UCSD/HSE:
+                Data Structures &amp; Algorithms Specialization (Coursera)</a></li>
+            <li><a href="https://www.educative.io/courses/grokking-coding-interview-patterns" target="_blank">Grokking
+                the Coding Interview: Patterns</a> — the source of most pattern names used here</li>
+          </ul>
+        </div>
+        <div class="res-card">
+          <h3>Books</h3>
+          <ul>
+            <li>CLRS — <em>Introduction to Algorithms</em> (theory reference for every algorithm here)</li>
+            <li>Gayle Laakmann McDowell — <em>Cracking the Coding Interview</em></li>
+            <li>Narasimha Karumanchi — <em>Data Structures and Algorithms Made Easy</em></li>
+          </ul>
+        </div>
+        <div class="res-card">
+          <h3>Visualizers</h3>
+          <ul>
+            <li><a href="https://visualgo.net/en" target="_blank">VisuAlgo</a> — animated visualizations for nearly
+              every structure/algorithm in this plan</li>
+            <li><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank">USFCA Data
+                Structure Visualizations</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer>Progress is stored locally to this artifact &middot; DSA Mastery Blueprint</footer>
+  </div>
+
+  <script>
+    const PROBLEMS = [{ "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number", "diff": "E", "url": "https://leetcode.com/problems/single-number/", "id": 0 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number II", "diff": "M", "url": "https://leetcode.com/problems/single-number-ii/", "id": 1 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Single Number III", "diff": "M", "url": "https://leetcode.com/problems/single-number-iii/", "id": 2 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Number of 1 Bits", "diff": "E", "url": "https://leetcode.com/problems/number-of-1-bits/", "id": 3 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Counting Bits", "diff": "E", "url": "https://leetcode.com/problems/counting-bits/", "id": 4 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Reverse Bits", "diff": "E", "url": "https://leetcode.com/problems/reverse-bits/", "id": 5 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Missing Number", "diff": "E", "url": "https://leetcode.com/problems/missing-number/", "id": 6 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Sum of Two Integers", "diff": "M", "url": "https://leetcode.com/problems/sum-of-two-integers/", "id": 7 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Bitwise AND of Numbers Range", "diff": "M", "url": "https://leetcode.com/problems/bitwise-and-of-numbers-range/", "id": 8 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Two", "diff": "E", "url": "https://leetcode.com/problems/power-of-two/", "id": 9 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Three", "diff": "E", "url": "https://leetcode.com/problems/power-of-three/", "id": 10 }, { "topic": "Math & Bit Manipulation", "pattern": "Bit Manipulation", "title": "Power of Four", "diff": "E", "url": "https://leetcode.com/problems/power-of-four/", "id": 11 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Pow(x, n)", "diff": "M", "url": "https://leetcode.com/problems/powx-n/", "id": 12 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Sqrt(x)", "diff": "E", "url": "https://leetcode.com/problems/sqrtx/", "id": 13 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Divide Two Integers", "diff": "M", "url": "https://leetcode.com/problems/divide-two-integers/", "id": 14 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Roman to Integer", "diff": "E", "url": "https://leetcode.com/problems/roman-to-integer/", "id": 15 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Integer to Roman", "diff": "M", "url": "https://leetcode.com/problems/integer-to-roman/", "id": 16 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Happy Number", "diff": "E", "url": "https://leetcode.com/problems/happy-number/", "id": 17 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Excel Sheet Column Number", "diff": "E", "url": "https://leetcode.com/problems/excel-sheet-column-number/", "id": 18 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Excel Sheet Column Title", "diff": "E", "url": "https://leetcode.com/problems/excel-sheet-column-title/", "id": 19 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Factorial Trailing Zeroes", "diff": "M", "url": "https://leetcode.com/problems/factorial-trailing-zeroes/", "id": 20 }, { "topic": "Math & Bit Manipulation", "pattern": "Number Theory", "title": "Count Primes", "diff": "M", "url": "https://leetcode.com/problems/count-primes/", "id": 21 }, { "topic": "Math & Bit Manipulation", "pattern": "Number Theory", "title": "Greatest Common Divisor of Strings", "diff": "E", "url": "https://leetcode.com/problems/greatest-common-divisor-of-strings/", "id": 22 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Fraction to Recurring Decimal", "diff": "M", "url": "https://leetcode.com/problems/fraction-to-recurring-decimal/", "id": 23 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Multiply Strings", "diff": "M", "url": "https://leetcode.com/problems/multiply-strings/", "id": 24 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Basic Calculator", "diff": "H", "url": "https://leetcode.com/problems/basic-calculator/", "id": 25 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Basic Calculator II", "diff": "M", "url": "https://leetcode.com/problems/basic-calculator-ii/", "id": 26 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Contains Duplicate", "diff": "E", "url": "https://leetcode.com/problems/contains-duplicate/", "id": 27 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Concatenation of Array", "diff": "E", "url": "https://leetcode.com/problems/concatenation-of-array/", "id": 28 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Replace Elements with Greatest Element on Right Side", "diff": "E", "url": "https://leetcode.com/problems/replace-elements-with-greatest-element-on-right-side/", "id": 29 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Is Subsequence", "diff": "E", "url": "https://leetcode.com/problems/is-subsequence/", "id": 30 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Length of Last Word", "diff": "E", "url": "https://leetcode.com/problems/length-of-last-word/", "id": 31 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Majority Element", "diff": "E", "url": "https://leetcode.com/problems/majority-element/", "id": 32 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Majority Element II", "diff": "M", "url": "https://leetcode.com/problems/majority-element-ii/", "id": 33 }, { "topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Find Pivot Index", "diff": "E", "url": "https://leetcode.com/problems/find-pivot-index/", "id": 34 }, { "topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Product of Array Except Self", "diff": "M", "url": "https://leetcode.com/problems/product-of-array-except-self/", "id": 35 }, { "topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Subarray Sum Equals K", "diff": "M", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "id": 36 }, { "topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Continuous Subarray Sum", "diff": "M", "url": "https://leetcode.com/problems/continuous-subarray-sum/", "id": 37 }, { "topic": "Arrays & Strings", "pattern": "Prefix Sum", "title": "Range Sum Query - Immutable", "diff": "E", "url": "https://leetcode.com/problems/range-sum-query-immutable/", "id": 38 }, { "topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-subarray/", "id": 39 }, { "topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Product Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-product-subarray/", "id": 40 }, { "topic": "Arrays & Strings", "pattern": "Kadane's Algorithm", "title": "Maximum Sum Circular Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-sum-circular-subarray/", "id": 41 }, { "topic": "Arrays & Strings", "pattern": "Array Rotation", "title": "Rotate Array", "diff": "M", "url": "https://leetcode.com/problems/rotate-array/", "id": 42 }, { "topic": "Arrays & Strings", "pattern": "Array Rotation", "title": "Rotate Image", "diff": "M", "url": "https://leetcode.com/problems/rotate-image/", "id": 43 }, { "topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Missing Number", "diff": "E", "url": "https://leetcode.com/problems/missing-number/", "id": 44 }, { "topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Find All Numbers Disappeared in an Array", "diff": "E", "url": "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/", "id": 45 }, { "topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "Find All Duplicates in an Array", "diff": "M", "url": "https://leetcode.com/problems/find-all-duplicates-in-an-array/", "id": 46 }, { "topic": "Arrays & Strings", "pattern": "Cyclic Sort", "title": "First Missing Positive", "diff": "H", "url": "https://leetcode.com/problems/first-missing-positive/", "id": 47 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Best Time to Buy and Sell Stock", "diff": "E", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "id": 48 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Best Time to Buy and Sell Stock II", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", "id": 49 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Jump Game", "diff": "M", "url": "https://leetcode.com/problems/jump-game/", "id": 50 }, { "topic": "Arrays & Strings", "pattern": "Greedy", "title": "Jump Game II", "diff": "M", "url": "https://leetcode.com/problems/jump-game-ii/", "id": 51 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Gas Station", "diff": "M", "url": "https://leetcode.com/problems/gas-station/", "id": 52 }, { "topic": "Arrays & Strings", "pattern": "Matrix", "title": "Spiral Matrix", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix/", "id": 53 }, { "topic": "Arrays & Strings", "pattern": "Matrix", "title": "Set Matrix Zeroes", "diff": "M", "url": "https://leetcode.com/problems/set-matrix-zeroes/", "id": 54 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Valid Anagram", "diff": "E", "url": "https://leetcode.com/problems/valid-anagram/", "id": 55 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Valid Palindrome", "diff": "E", "url": "https://leetcode.com/problems/valid-palindrome/", "id": 56 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Reverse String", "diff": "E", "url": "https://leetcode.com/problems/reverse-string/", "id": 57 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Reverse Words in a String", "diff": "M", "url": "https://leetcode.com/problems/reverse-words-in-a-string/", "id": 58 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "String to Integer (atoi)", "diff": "M", "url": "https://leetcode.com/problems/string-to-integer-atoi/", "id": 59 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Group Anagrams", "diff": "M", "url": "https://leetcode.com/problems/group-anagrams/", "id": 60 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Longest Common Prefix", "diff": "E", "url": "https://leetcode.com/problems/longest-common-prefix/", "id": 61 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Zigzag Conversion", "diff": "M", "url": "https://leetcode.com/problems/zigzag-conversion/", "id": 62 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Count and Say", "diff": "M", "url": "https://leetcode.com/problems/count-and-say/", "id": 63 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Ransom Note", "diff": "E", "url": "https://leetcode.com/problems/ransom-note/", "id": 64 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Isomorphic Strings", "diff": "E", "url": "https://leetcode.com/problems/isomorphic-strings/", "id": 65 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Word Pattern", "diff": "E", "url": "https://leetcode.com/problems/word-pattern/", "id": 66 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Merge Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/merge-sorted-array/", "id": 67 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Remove Duplicates from Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/", "id": 68 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Remove Element", "diff": "E", "url": "https://leetcode.com/problems/remove-element/", "id": 69 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "Next Permutation", "diff": "M", "url": "https://leetcode.com/problems/next-permutation/", "id": 70 }, { "topic": "Arrays & Strings", "pattern": "Array Basics", "title": "H-Index", "diff": "M", "url": "https://leetcode.com/problems/h-index/", "id": 71 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Two Sum", "diff": "E", "url": "https://leetcode.com/problems/two-sum/", "id": 72 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Longest Consecutive Sequence", "diff": "M", "url": "https://leetcode.com/problems/longest-consecutive-sequence/", "id": 73 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Top K Frequent Elements", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-elements/", "id": 74 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Encode and Decode Strings", "diff": "M", "url": "https://leetcode.com/problems/encode-and-decode-strings/", "id": 75 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Subarray Sum Equals K", "diff": "M", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "id": 76 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "4Sum II", "diff": "M", "url": "https://leetcode.com/problems/4sum-ii/", "id": 77 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Insert Delete GetRandom O(1)", "diff": "M", "url": "https://leetcode.com/problems/insert-delete-getrandom-o1/", "id": 78 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Design HashMap", "diff": "E", "url": "https://leetcode.com/problems/design-hashmap/", "id": 79 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Design HashSet", "diff": "E", "url": "https://leetcode.com/problems/design-hashset/", "id": 80 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "First Unique Character in a String", "diff": "E", "url": "https://leetcode.com/problems/first-unique-character-in-a-string/", "id": 81 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Longest Substring Without Repeating Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/", "id": 82 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Two Sum II - Input Array Is Sorted", "diff": "M", "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", "id": 83 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "3Sum", "diff": "M", "url": "https://leetcode.com/problems/3sum/", "id": 84 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "4Sum", "diff": "M", "url": "https://leetcode.com/problems/4sum/", "id": 85 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Contains Duplicate II", "diff": "E", "url": "https://leetcode.com/problems/contains-duplicate-ii/", "id": 86 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Determine if Two Strings Are Close", "diff": "M", "url": "https://leetcode.com/problems/determine-if-two-strings-are-close/", "id": 87 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Sort Characters By Frequency", "diff": "M", "url": "https://leetcode.com/problems/sort-characters-by-frequency/", "id": 88 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Find the Duplicate Number", "diff": "M", "url": "https://leetcode.com/problems/find-the-duplicate-number/", "id": 89 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Isomorphic Strings", "diff": "E", "url": "https://leetcode.com/problems/isomorphic-strings/", "id": 90 }, { "topic": "Hashing (HashMap / HashSet)", "pattern": "Hashing", "title": "Word Pattern", "diff": "E", "url": "https://leetcode.com/problems/word-pattern/", "id": 91 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Valid Palindrome", "diff": "E", "url": "https://leetcode.com/problems/valid-palindrome/", "id": 92 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Two Sum II - Input Array Is Sorted", "diff": "M", "url": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", "id": 93 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "3Sum", "diff": "M", "url": "https://leetcode.com/problems/3sum/", "id": 94 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "3Sum Closest", "diff": "M", "url": "https://leetcode.com/problems/3sum-closest/", "id": 95 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Container With Most Water", "diff": "M", "url": "https://leetcode.com/problems/container-with-most-water/", "id": 96 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Trapping Rain Water", "diff": "H", "url": "https://leetcode.com/problems/trapping-rain-water/", "id": 97 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Sort Colors", "diff": "M", "url": "https://leetcode.com/problems/sort-colors/", "id": 98 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Move Zeroes", "diff": "E", "url": "https://leetcode.com/problems/move-zeroes/", "id": 99 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Remove Duplicates from Sorted Array II", "diff": "M", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/", "id": 100 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Boats to Save People", "diff": "M", "url": "https://leetcode.com/problems/boats-to-save-people/", "id": 101 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Squares of a Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/squares-of-a-sorted-array/", "id": 102 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Backspace String Compare", "diff": "E", "url": "https://leetcode.com/problems/backspace-string-compare/", "id": 103 }, { "topic": "Two Pointers", "pattern": "Two Pointers", "title": "Merge Sorted Array", "diff": "E", "url": "https://leetcode.com/problems/merge-sorted-array/", "id": 104 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Linked List Cycle", "diff": "E", "url": "https://leetcode.com/problems/linked-list-cycle/", "id": 105 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Linked List Cycle II", "diff": "M", "url": "https://leetcode.com/problems/linked-list-cycle-ii/", "id": 106 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Happy Number", "diff": "E", "url": "https://leetcode.com/problems/happy-number/", "id": 107 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Middle of the Linked List", "diff": "E", "url": "https://leetcode.com/problems/middle-of-the-linked-list/", "id": 108 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Find the Duplicate Number", "diff": "M", "url": "https://leetcode.com/problems/find-the-duplicate-number/", "id": 109 }, { "topic": "Two Pointers", "pattern": "Fast & Slow Pointers", "title": "Palindrome Linked List", "diff": "E", "url": "https://leetcode.com/problems/palindrome-linked-list/", "id": 110 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Best Time to Buy and Sell Stock", "diff": "E", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "id": 111 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Substring Without Repeating Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/", "id": 112 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Repeating Character Replacement", "diff": "M", "url": "https://leetcode.com/problems/longest-repeating-character-replacement/", "id": 113 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Permutation in String", "diff": "M", "url": "https://leetcode.com/problems/permutation-in-string/", "id": 114 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Minimum Window Substring", "diff": "H", "url": "https://leetcode.com/problems/minimum-window-substring/", "id": 115 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Sliding Window Maximum", "diff": "H", "url": "https://leetcode.com/problems/sliding-window-maximum/", "id": 116 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Find All Anagrams in a String", "diff": "M", "url": "https://leetcode.com/problems/find-all-anagrams-in-a-string/", "id": 117 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Fruit Into Baskets", "diff": "M", "url": "https://leetcode.com/problems/fruit-into-baskets/", "id": 118 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Max Consecutive Ones III", "diff": "M", "url": "https://leetcode.com/problems/max-consecutive-ones-iii/", "id": 119 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Minimum Size Subarray Sum", "diff": "M", "url": "https://leetcode.com/problems/minimum-size-subarray-sum/", "id": 120 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Subarrays with K Different Integers", "diff": "H", "url": "https://leetcode.com/problems/subarrays-with-k-different-integers/", "id": 121 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Substring with At Most K Distinct Characters", "diff": "M", "url": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/", "id": 122 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Frequency of the Most Frequent Element", "diff": "M", "url": "https://leetcode.com/problems/frequency-of-the-most-frequent-element/", "id": 123 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Maximum Points You Can Obtain from Cards", "diff": "M", "url": "https://leetcode.com/problems/maximum-points-you-can-obtain-from-cards/", "id": 124 }, { "topic": "Sliding Window", "pattern": "Sliding Window", "title": "Longest Subarray of 1's After Deleting One Element", "diff": "M", "url": "https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/", "id": 125 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge Sort (implement)", "diff": "M", "url": "https://www.geeksforgeeks.org/merge-sort/", "id": 126 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Quick Sort (implement)", "diff": "M", "url": "https://www.geeksforgeeks.org/quick-sort-algorithm/", "id": 127 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Sort an Array", "diff": "M", "url": "https://leetcode.com/problems/sort-an-array/", "id": 128 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 129 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Largest Number", "diff": "M", "url": "https://leetcode.com/problems/largest-number/", "id": 130 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Sort Colors", "diff": "M", "url": "https://leetcode.com/problems/sort-colors/", "id": 131 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Kth Largest Element in an Array", "diff": "M", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/", "id": 132 }, { "topic": "Sorting & Binary Search", "pattern": "Sorting", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 133 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Binary Search", "diff": "E", "url": "https://leetcode.com/problems/binary-search/", "id": 134 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search Insert Position", "diff": "E", "url": "https://leetcode.com/problems/search-insert-position/", "id": 135 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find First and Last Position of Element in Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/", "id": 136 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search in Rotated Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/", "id": 137 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Search in Rotated Sorted Array II", "diff": "M", "url": "https://leetcode.com/problems/search-in-rotated-sorted-array-ii/", "id": 138 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find Minimum in Rotated Sorted Array", "diff": "M", "url": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/", "id": 139 }, { "topic": "Sorting & Binary Search", "pattern": "Binary Search", "title": "Find Peak Element", "diff": "M", "url": "https://leetcode.com/problems/find-peak-element/", "id": 140 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Median of Two Sorted Arrays", "diff": "H", "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/", "id": 141 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Koko Eating Bananas", "diff": "M", "url": "https://leetcode.com/problems/koko-eating-bananas/", "id": 142 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Capacity To Ship Packages Within D Days", "diff": "M", "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/", "id": 143 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Split Array Largest Sum", "diff": "H", "url": "https://leetcode.com/problems/split-array-largest-sum/", "id": 144 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Find K Closest Elements", "diff": "M", "url": "https://leetcode.com/problems/find-k-closest-elements/", "id": 145 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Search a 2D Matrix", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix/", "id": 146 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Search a 2D Matrix II", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/", "id": 147 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Time Based Key-Value Store", "diff": "M", "url": "https://leetcode.com/problems/time-based-key-value-store/", "id": 148 }, { "topic": "Sorting & Binary Search", "pattern": "Modified Binary Search", "title": "Peak Index in a Mountain Array", "diff": "M", "url": "https://leetcode.com/problems/peak-index-in-a-mountain-array/", "id": 149 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Valid Parentheses", "diff": "E", "url": "https://leetcode.com/problems/valid-parentheses/", "id": 150 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Min Stack", "diff": "M", "url": "https://leetcode.com/problems/min-stack/", "id": 151 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Evaluate Reverse Polish Notation", "diff": "M", "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/", "id": 152 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Generate Parentheses", "diff": "M", "url": "https://leetcode.com/problems/generate-parentheses/", "id": 153 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Baseball Game", "diff": "E", "url": "https://leetcode.com/problems/baseball-game/", "id": 154 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Daily Temperatures", "diff": "M", "url": "https://leetcode.com/problems/daily-temperatures/", "id": 155 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Next Greater Element I", "diff": "E", "url": "https://leetcode.com/problems/next-greater-element-i/", "id": 156 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Next Greater Element II", "diff": "M", "url": "https://leetcode.com/problems/next-greater-element-ii/", "id": 157 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Largest Rectangle in Histogram", "diff": "H", "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/", "id": 158 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Maximal Rectangle", "diff": "H", "url": "https://leetcode.com/problems/maximal-rectangle/", "id": 159 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Online Stock Span", "diff": "M", "url": "https://leetcode.com/problems/online-stock-span/", "id": 160 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "Remove K Digits", "diff": "M", "url": "https://leetcode.com/problems/remove-k-digits/", "id": 161 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Stack", "title": "132 Pattern", "diff": "M", "url": "https://leetcode.com/problems/132-pattern/", "id": 162 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Simplify Path", "diff": "M", "url": "https://leetcode.com/problems/simplify-path/", "id": 163 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Decode String", "diff": "M", "url": "https://leetcode.com/problems/decode-string/", "id": 164 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Basic Calculator II", "diff": "M", "url": "https://leetcode.com/problems/basic-calculator-ii/", "id": 165 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Asteroid Collision", "diff": "M", "url": "https://leetcode.com/problems/asteroid-collision/", "id": 166 }, { "topic": "Stacks & Queues", "pattern": "Queue", "title": "Implement Queue using Stacks", "diff": "E", "url": "https://leetcode.com/problems/implement-queue-using-stacks/", "id": 167 }, { "topic": "Stacks & Queues", "pattern": "Queue", "title": "Implement Stack using Queues", "diff": "E", "url": "https://leetcode.com/problems/implement-stack-using-queues/", "id": 168 }, { "topic": "Stacks & Queues", "pattern": "Queue", "title": "Design Circular Queue", "diff": "M", "url": "https://leetcode.com/problems/design-circular-queue/", "id": 169 }, { "topic": "Stacks & Queues", "pattern": "Monotonic Queue", "title": "Sliding Window Maximum", "diff": "H", "url": "https://leetcode.com/problems/sliding-window-maximum/", "id": 170 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Reverse Linked List", "diff": "E", "url": "https://leetcode.com/problems/reverse-linked-list/", "id": 171 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Reverse Linked List II", "diff": "M", "url": "https://leetcode.com/problems/reverse-linked-list-ii/", "id": 172 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Merge Two Sorted Lists", "diff": "E", "url": "https://leetcode.com/problems/merge-two-sorted-lists/", "id": 173 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 174 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Remove Nth Node From End of List", "diff": "M", "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", "id": 175 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Reorder List", "diff": "M", "url": "https://leetcode.com/problems/reorder-list/", "id": 176 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Linked List Cycle", "diff": "E", "url": "https://leetcode.com/problems/linked-list-cycle/", "id": 177 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Linked List Cycle II", "diff": "M", "url": "https://leetcode.com/problems/linked-list-cycle-ii/", "id": 178 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Copy List with Random Pointer", "diff": "M", "url": "https://leetcode.com/problems/copy-list-with-random-pointer/", "id": 179 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Add Two Numbers", "diff": "M", "url": "https://leetcode.com/problems/add-two-numbers/", "id": 180 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Add Two Numbers II", "diff": "M", "url": "https://leetcode.com/problems/add-two-numbers-ii/", "id": 181 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Palindrome Linked List", "diff": "E", "url": "https://leetcode.com/problems/palindrome-linked-list/", "id": 182 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Flatten a Multilevel Doubly Linked List", "diff": "M", "url": "https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/", "id": 183 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Rotate List", "diff": "M", "url": "https://leetcode.com/problems/rotate-list/", "id": 184 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Swap Nodes in Pairs", "diff": "M", "url": "https://leetcode.com/problems/swap-nodes-in-pairs/", "id": 185 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Reverse Nodes in k-Group", "diff": "H", "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/", "id": 186 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Odd Even Linked List", "diff": "M", "url": "https://leetcode.com/problems/odd-even-linked-list/", "id": 187 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Partition List", "diff": "M", "url": "https://leetcode.com/problems/partition-list/", "id": 188 }, { "topic": "Linked List", "pattern": "Linked List (LRU)", "title": "LRU Cache", "diff": "M", "url": "https://leetcode.com/problems/lru-cache/", "id": 189 }, { "topic": "Linked List", "pattern": "Linked List (LFU)", "title": "LFU Cache", "diff": "H", "url": "https://leetcode.com/problems/lfu-cache/", "id": 190 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Design Linked List", "diff": "M", "url": "https://leetcode.com/problems/design-linked-list/", "id": 191 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Intersection of Two Linked Lists", "diff": "E", "url": "https://leetcode.com/problems/intersection-of-two-linked-lists/", "id": 192 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Remove Duplicates from Sorted List", "diff": "E", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list/", "id": 193 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Remove Duplicates from Sorted List II", "diff": "M", "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/", "id": 194 }, { "topic": "Linked List", "pattern": "Linked List", "title": "Sort List", "diff": "M", "url": "https://leetcode.com/problems/sort-list/", "id": 195 }, { "topic": "Recursion & Backtracking", "pattern": "Subsets Pattern", "title": "Subsets", "diff": "M", "url": "https://leetcode.com/problems/subsets/", "id": 196 }, { "topic": "Recursion & Backtracking", "pattern": "Subsets Pattern", "title": "Subsets II", "diff": "M", "url": "https://leetcode.com/problems/subsets-ii/", "id": 197 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Permutations", "diff": "M", "url": "https://leetcode.com/problems/permutations/", "id": 198 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Permutations II", "diff": "M", "url": "https://leetcode.com/problems/permutations-ii/", "id": 199 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combinations", "diff": "M", "url": "https://leetcode.com/problems/combinations/", "id": 200 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum", "diff": "M", "url": "https://leetcode.com/problems/combination-sum/", "id": 201 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum II", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-ii/", "id": 202 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Combination Sum III", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-iii/", "id": 203 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Word Search", "diff": "M", "url": "https://leetcode.com/problems/word-search/", "id": 204 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Word Search II", "diff": "H", "url": "https://leetcode.com/problems/word-search-ii/", "id": 205 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Palindrome Partitioning", "diff": "M", "url": "https://leetcode.com/problems/palindrome-partitioning/", "id": 206 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "N-Queens", "diff": "H", "url": "https://leetcode.com/problems/n-queens/", "id": 207 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "N-Queens II", "diff": "H", "url": "https://leetcode.com/problems/n-queens-ii/", "id": 208 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Sudoku Solver", "diff": "H", "url": "https://leetcode.com/problems/sudoku-solver/", "id": 209 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Generate Parentheses", "diff": "M", "url": "https://leetcode.com/problems/generate-parentheses/", "id": 210 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Letter Combinations of a Phone Number", "diff": "M", "url": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/", "id": 211 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Restore IP Addresses", "diff": "M", "url": "https://leetcode.com/problems/restore-ip-addresses/", "id": 212 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Gray Code", "diff": "M", "url": "https://leetcode.com/problems/gray-code/", "id": 213 }, { "topic": "Recursion & Backtracking", "pattern": "Backtracking", "title": "Beautiful Arrangement", "diff": "M", "url": "https://leetcode.com/problems/beautiful-arrangement/", "id": 214 }, { "topic": "Recursion & Backtracking", "pattern": "Recursion", "title": "Pow(x, n)", "diff": "M", "url": "https://leetcode.com/problems/powx-n/", "id": 215 }, { "topic": "Recursion & Backtracking", "pattern": "Recursion", "title": "Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/climbing-stairs/", "id": 216 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Maximum Depth of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/", "id": 217 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Same Tree", "diff": "E", "url": "https://leetcode.com/problems/same-tree/", "id": 218 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Invert Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/invert-binary-tree/", "id": 219 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Subtree of Another Tree", "diff": "E", "url": "https://leetcode.com/problems/subtree-of-another-tree/", "id": 220 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Diameter of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/diameter-of-binary-tree/", "id": 221 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Balanced Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/balanced-binary-tree/", "id": 222 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Path Sum", "diff": "E", "url": "https://leetcode.com/problems/path-sum/", "id": 223 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Path Sum II", "diff": "M", "url": "https://leetcode.com/problems/path-sum-ii/", "id": 224 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Binary Tree Maximum Path Sum", "diff": "H", "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/", "id": 225 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Sum Root to Leaf Numbers", "diff": "M", "url": "https://leetcode.com/problems/sum-root-to-leaf-numbers/", "id": 226 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Flatten Binary Tree to Linked List", "diff": "M", "url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/", "id": 227 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree DFS", "title": "Count Good Nodes in Binary Tree", "diff": "M", "url": "https://leetcode.com/problems/count-good-nodes-in-binary-tree/", "id": 228 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Level Order Traversal", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/", "id": 229 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Zigzag Level Order Traversal", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/", "id": 230 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Binary Tree Right Side View", "diff": "M", "url": "https://leetcode.com/problems/binary-tree-right-side-view/", "id": 231 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Average of Levels in Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/average-of-levels-in-binary-tree/", "id": 232 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Minimum Depth of Binary Tree", "diff": "E", "url": "https://leetcode.com/problems/minimum-depth-of-binary-tree/", "id": 233 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree BFS", "title": "Populating Next Right Pointers in Each Node", "diff": "M", "url": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node/", "id": 234 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Inorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-inorder-traversal/", "id": 235 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Preorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-preorder-traversal/", "id": 236 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Traversal", "title": "Binary Tree Postorder Traversal", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-postorder-traversal/", "id": 237 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Construct Binary Tree from Preorder and Inorder Traversal", "diff": "M", "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/", "id": 238 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Construct Binary Tree from Inorder and Postorder Traversal", "diff": "M", "url": "https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/", "id": 239 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Construction", "title": "Serialize and Deserialize Binary Tree", "diff": "H", "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/", "id": 240 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Validate Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/validate-binary-search-tree/", "id": 241 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Kth Smallest Element in a BST", "diff": "M", "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/", "id": 242 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Insert into a Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/insert-into-a-binary-search-tree/", "id": 243 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Delete Node in a BST", "diff": "M", "url": "https://leetcode.com/problems/delete-node-in-a-bst/", "id": 244 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "BST", "title": "Lowest Common Ancestor of a Binary Search Tree", "diff": "M", "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/", "id": 245 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Lowest Common Ancestor of a Binary Tree", "diff": "M", "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/", "id": 246 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Binary Tree Paths", "diff": "E", "url": "https://leetcode.com/problems/binary-tree-paths/", "id": 247 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Symmetric Tree", "diff": "E", "url": "https://leetcode.com/problems/symmetric-tree/", "id": 248 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Convert Sorted Array to Binary Search Tree", "diff": "E", "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/", "id": 249 }, { "topic": "Trees (Binary Tree / BST)", "pattern": "Tree", "title": "Vertical Order Traversal of a Binary Tree", "diff": "H", "url": "https://leetcode.com/problems/vertical-order-traversal-of-a-binary-tree/", "id": 250 }, { "topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Kth Largest Element in an Array", "diff": "M", "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/", "id": 251 }, { "topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Kth Largest Element in a Stream", "diff": "E", "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/", "id": 252 }, { "topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Top K Frequent Elements", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-elements/", "id": 253 }, { "topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "Top K Frequent Words", "diff": "M", "url": "https://leetcode.com/problems/top-k-frequent-words/", "id": 254 }, { "topic": "Heap / Priority Queue", "pattern": "Top K Elements", "title": "K Closest Points to Origin", "diff": "M", "url": "https://leetcode.com/problems/k-closest-points-to-origin/", "id": 255 }, { "topic": "Heap / Priority Queue", "pattern": "Two Heaps", "title": "Find Median from Data Stream", "diff": "H", "url": "https://leetcode.com/problems/find-median-from-data-stream/", "id": 256 }, { "topic": "Heap / Priority Queue", "pattern": "Two Heaps", "title": "IPO", "diff": "H", "url": "https://leetcode.com/problems/ipo/", "id": 257 }, { "topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Merge k Sorted Lists", "diff": "H", "url": "https://leetcode.com/problems/merge-k-sorted-lists/", "id": 258 }, { "topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Smallest Range Covering Elements from K Lists", "diff": "H", "url": "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/", "id": 259 }, { "topic": "Heap / Priority Queue", "pattern": "K-way Merge", "title": "Kth Smallest Element in a Sorted Matrix", "diff": "M", "url": "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/", "id": 260 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Task Scheduler", "diff": "M", "url": "https://leetcode.com/problems/task-scheduler/", "id": 261 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Reorganize String", "diff": "M", "url": "https://leetcode.com/problems/reorganize-string/", "id": 262 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Last Stone Weight", "diff": "E", "url": "https://leetcode.com/problems/last-stone-weight/", "id": 263 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Design Twitter", "diff": "M", "url": "https://leetcode.com/problems/design-twitter/", "id": 264 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Meeting Rooms II", "diff": "M", "url": "https://leetcode.com/problems/meeting-rooms-ii/", "id": 265 }, { "topic": "Heap / Priority Queue", "pattern": "Heap", "title": "Process Tasks Using Servers", "diff": "M", "url": "https://leetcode.com/problems/process-tasks-using-servers/", "id": 266 }, { "topic": "Trie", "pattern": "Trie", "title": "Implement Trie (Prefix Tree)", "diff": "M", "url": "https://leetcode.com/problems/implement-trie-prefix-tree/", "id": 267 }, { "topic": "Trie", "pattern": "Trie", "title": "Design Add and Search Words Data Structure", "diff": "M", "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/", "id": 268 }, { "topic": "Trie", "pattern": "Trie", "title": "Word Search II", "diff": "H", "url": "https://leetcode.com/problems/word-search-ii/", "id": 269 }, { "topic": "Trie", "pattern": "Trie", "title": "Replace Words", "diff": "M", "url": "https://leetcode.com/problems/replace-words/", "id": 270 }, { "topic": "Trie", "pattern": "Trie", "title": "Longest Word in Dictionary", "diff": "M", "url": "https://leetcode.com/problems/longest-word-in-dictionary/", "id": 271 }, { "topic": "Trie", "pattern": "Trie", "title": "Maximum XOR of Two Numbers in an Array", "diff": "M", "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/", "id": 272 }, { "topic": "Trie", "pattern": "Trie", "title": "Design Search Autocomplete System", "diff": "H", "url": "https://leetcode.com/problems/design-search-autocomplete-system/", "id": 273 }, { "topic": "Trie", "pattern": "Trie", "title": "Palindrome Pairs", "diff": "H", "url": "https://leetcode.com/problems/palindrome-pairs/", "id": 274 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Number of Islands", "diff": "M", "url": "https://leetcode.com/problems/number-of-islands/", "id": 275 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Max Area of Island", "diff": "M", "url": "https://leetcode.com/problems/max-area-of-island/", "id": 276 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Flood Fill", "diff": "E", "url": "https://leetcode.com/problems/flood-fill/", "id": 277 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Clone Graph", "diff": "M", "url": "https://leetcode.com/problems/clone-graph/", "id": 278 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Islands and Treasure (Walls and Gates)", "diff": "M", "url": "https://leetcode.com/problems/walls-and-gates/", "id": 279 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Rotting Oranges", "diff": "M", "url": "https://leetcode.com/problems/rotting-oranges/", "id": 280 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Pacific Atlantic Water Flow", "diff": "M", "url": "https://leetcode.com/problems/pacific-atlantic-water-flow/", "id": 281 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Surrounded Regions", "diff": "M", "url": "https://leetcode.com/problems/surrounded-regions/", "id": 282 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Word Ladder", "diff": "H", "url": "https://leetcode.com/problems/word-ladder/", "id": 283 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Word Ladder II", "diff": "H", "url": "https://leetcode.com/problems/word-ladder-ii/", "id": 284 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "01 Matrix", "diff": "M", "url": "https://leetcode.com/problems/01-matrix/", "id": 285 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "As Far from Land as Possible", "diff": "M", "url": "https://leetcode.com/problems/as-far-from-land-as-possible/", "id": 286 }, { "topic": "Graphs", "pattern": "Topological Sort", "title": "Course Schedule", "diff": "M", "url": "https://leetcode.com/problems/course-schedule/", "id": 287 }, { "topic": "Graphs", "pattern": "Topological Sort", "title": "Course Schedule II", "diff": "M", "url": "https://leetcode.com/problems/course-schedule-ii/", "id": 288 }, { "topic": "Graphs", "pattern": "Topological Sort", "title": "Alien Dictionary", "diff": "H", "url": "https://leetcode.com/problems/alien-dictionary/", "id": 289 }, { "topic": "Graphs", "pattern": "Topological Sort", "title": "Sequence Reconstruction", "diff": "M", "url": "https://leetcode.com/problems/sequence-reconstruction/", "id": 290 }, { "topic": "Graphs", "pattern": "Topological Sort", "title": "Minimum Height Trees", "diff": "M", "url": "https://leetcode.com/problems/minimum-height-trees/", "id": 291 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Number of Connected Components in an Undirected Graph", "diff": "M", "url": "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/", "id": 292 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Graph Valid Tree", "diff": "M", "url": "https://leetcode.com/problems/graph-valid-tree/", "id": 293 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Redundant Connection", "diff": "M", "url": "https://leetcode.com/problems/redundant-connection/", "id": 294 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Accounts Merge", "diff": "M", "url": "https://leetcode.com/problems/accounts-merge/", "id": 295 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Number of Provinces", "diff": "M", "url": "https://leetcode.com/problems/number-of-provinces/", "id": 296 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Satisfiability of Equality Equations", "diff": "M", "url": "https://leetcode.com/problems/satisfiability-of-equality-equations/", "id": 297 }, { "topic": "Graphs", "pattern": "Union-Find (DSU)", "title": "Swim in Rising Water", "diff": "H", "url": "https://leetcode.com/problems/swim-in-rising-water/", "id": 298 }, { "topic": "Graphs", "pattern": "Shortest Path", "title": "Network Delay Time (Dijkstra)", "diff": "M", "url": "https://leetcode.com/problems/network-delay-time/", "id": 299 }, { "topic": "Graphs", "pattern": "Shortest Path", "title": "Cheapest Flights Within K Stops (Bellman-Ford)", "diff": "M", "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/", "id": 300 }, { "topic": "Graphs", "pattern": "Shortest Path", "title": "Path with Minimum Effort", "diff": "M", "url": "https://leetcode.com/problems/path-with-minimum-effort/", "id": 301 }, { "topic": "Graphs", "pattern": "Shortest Path", "title": "Swim in Rising Water", "diff": "H", "url": "https://leetcode.com/problems/swim-in-rising-water/", "id": 302 }, { "topic": "Graphs", "pattern": "Shortest Path", "title": "Find the City With the Smallest Number of Neighbors (Floyd-Warshall)", "diff": "M", "url": "https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/", "id": 303 }, { "topic": "Graphs", "pattern": "Minimum Spanning Tree", "title": "Min Cost to Connect All Points (Prim's)", "diff": "M", "url": "https://leetcode.com/problems/min-cost-to-connect-all-points/", "id": 304 }, { "topic": "Graphs", "pattern": "Minimum Spanning Tree", "title": "Connecting Cities With Minimum Cost (Kruskal's)", "diff": "M", "url": "https://leetcode.com/problems/connecting-cities-with-minimum-cost/", "id": 305 }, { "topic": "Graphs", "pattern": "Graph", "title": "Graph Bipartite Check", "diff": "M", "url": "https://leetcode.com/problems/is-graph-bipartite/", "id": 306 }, { "topic": "Graphs", "pattern": "Graph", "title": "Reconstruct Itinerary (Eulerian Path)", "diff": "H", "url": "https://leetcode.com/problems/reconstruct-itinerary/", "id": 307 }, { "topic": "Graphs", "pattern": "Graph", "title": "Evaluate Division", "diff": "M", "url": "https://leetcode.com/problems/evaluate-division/", "id": 308 }, { "topic": "Graphs", "pattern": "Graph", "title": "Critical Connections in a Network (Bridges)", "diff": "H", "url": "https://leetcode.com/problems/critical-connections-in-a-network/", "id": 309 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/climbing-stairs/", "id": 310 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "House Robber", "diff": "M", "url": "https://leetcode.com/problems/house-robber/", "id": 311 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "House Robber II", "diff": "M", "url": "https://leetcode.com/problems/house-robber-ii/", "id": 312 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Decode Ways", "diff": "M", "url": "https://leetcode.com/problems/decode-ways/", "id": 313 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Coin Change", "diff": "M", "url": "https://leetcode.com/problems/coin-change/", "id": 314 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Coin Change II", "diff": "M", "url": "https://leetcode.com/problems/coin-change-ii/", "id": 315 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Maximum Subarray", "diff": "M", "url": "https://leetcode.com/problems/maximum-subarray/", "id": 316 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Word Break", "diff": "M", "url": "https://leetcode.com/problems/word-break/", "id": 317 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Longest Increasing Subsequence", "diff": "M", "url": "https://leetcode.com/problems/longest-increasing-subsequence/", "id": 318 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Number of Longest Increasing Subsequence", "diff": "M", "url": "https://leetcode.com/problems/number-of-longest-increasing-subsequence/", "id": 319 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Russian Doll Envelopes", "diff": "H", "url": "https://leetcode.com/problems/russian-doll-envelopes/", "id": 320 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Partition Equal Subset Sum", "diff": "M", "url": "https://leetcode.com/problems/partition-equal-subset-sum/", "id": 321 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Combination Sum IV", "diff": "M", "url": "https://leetcode.com/problems/combination-sum-iv/", "id": 322 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Perfect Squares", "diff": "M", "url": "https://leetcode.com/problems/perfect-squares/", "id": 323 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Integer Break", "diff": "M", "url": "https://leetcode.com/problems/integer-break/", "id": 324 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Min Cost Climbing Stairs", "diff": "E", "url": "https://leetcode.com/problems/min-cost-climbing-stairs/", "id": 325 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Unique Paths", "diff": "M", "url": "https://leetcode.com/problems/unique-paths/", "id": 326 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Unique Paths II", "diff": "M", "url": "https://leetcode.com/problems/unique-paths-ii/", "id": 327 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Minimum Path Sum", "diff": "M", "url": "https://leetcode.com/problems/minimum-path-sum/", "id": 328 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Longest Common Subsequence", "diff": "M", "url": "https://leetcode.com/problems/longest-common-subsequence/", "id": 329 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Longest Palindromic Substring", "diff": "M", "url": "https://leetcode.com/problems/longest-palindromic-substring/", "id": 330 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Palindromic Substrings", "diff": "M", "url": "https://leetcode.com/problems/palindromic-substrings/", "id": 331 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Edit Distance", "diff": "H", "url": "https://leetcode.com/problems/edit-distance/", "id": 332 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Distinct Subsequences", "diff": "H", "url": "https://leetcode.com/problems/distinct-subsequences/", "id": 333 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Interleaving String", "diff": "M", "url": "https://leetcode.com/problems/interleaving-string/", "id": 334 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Regular Expression Matching", "diff": "H", "url": "https://leetcode.com/problems/regular-expression-matching/", "id": 335 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Wildcard Matching", "diff": "H", "url": "https://leetcode.com/problems/wildcard-matching/", "id": 336 }, { "topic": "Dynamic Programming", "pattern": "2D DP", "title": "Maximal Square", "diff": "M", "url": "https://leetcode.com/problems/maximal-square/", "id": 337 }, { "topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Partition Equal Subset Sum", "diff": "M", "url": "https://leetcode.com/problems/partition-equal-subset-sum/", "id": 338 }, { "topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Target Sum", "diff": "M", "url": "https://leetcode.com/problems/target-sum/", "id": 339 }, { "topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Ones and Zeroes", "diff": "M", "url": "https://leetcode.com/problems/ones-and-zeroes/", "id": 340 }, { "topic": "Dynamic Programming", "pattern": "0/1 Knapsack", "title": "Last Stone Weight II", "diff": "M", "url": "https://leetcode.com/problems/last-stone-weight-ii/", "id": 341 }, { "topic": "Dynamic Programming", "pattern": "Unbounded Knapsack", "title": "Coin Change", "diff": "M", "url": "https://leetcode.com/problems/coin-change/", "id": 342 }, { "topic": "Dynamic Programming", "pattern": "Unbounded Knapsack", "title": "Coin Change II", "diff": "M", "url": "https://leetcode.com/problems/coin-change-ii/", "id": 343 }, { "topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock with Cooldown", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/", "id": 344 }, { "topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock III", "diff": "H", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/", "id": 345 }, { "topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock IV", "diff": "H", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/", "id": 346 }, { "topic": "Dynamic Programming", "pattern": "DP on Stocks", "title": "Best Time to Buy and Sell Stock with Transaction Fee", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/", "id": 347 }, { "topic": "Dynamic Programming", "pattern": "Interval DP", "title": "Burst Balloons", "diff": "H", "url": "https://leetcode.com/problems/burst-balloons/", "id": 348 }, { "topic": "Dynamic Programming", "pattern": "Interval DP", "title": "Matrix Chain Multiplication", "diff": "H", "url": "https://www.geeksforgeeks.org/matrix-chain-multiplication-dp-8/", "id": 349 }, { "topic": "Dynamic Programming", "pattern": "DP on Trees", "title": "House Robber III", "diff": "M", "url": "https://leetcode.com/problems/house-robber-iii/", "id": 350 }, { "topic": "Dynamic Programming", "pattern": "DP on Trees", "title": "Binary Tree Maximum Path Sum", "diff": "H", "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/", "id": 351 }, { "topic": "Dynamic Programming", "pattern": "DP on Grids", "title": "Dungeon Game", "diff": "H", "url": "https://leetcode.com/problems/dungeon-game/", "id": 352 }, { "topic": "Dynamic Programming", "pattern": "DP on Grids", "title": "Cherry Pickup", "diff": "H", "url": "https://leetcode.com/problems/cherry-pickup/", "id": 353 }, { "topic": "Dynamic Programming", "pattern": "Bitmask DP", "title": "Partition to K Equal Sum Subsets", "diff": "M", "url": "https://leetcode.com/problems/partition-to-k-equal-sum-subsets/", "id": 354 }, { "topic": "Dynamic Programming", "pattern": "Bitmask DP", "title": "Shortest Path Visiting All Nodes", "diff": "H", "url": "https://leetcode.com/problems/shortest-path-visiting-all-nodes/", "id": 355 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Jump Game", "diff": "M", "url": "https://leetcode.com/problems/jump-game/", "id": 356 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Jump Game II", "diff": "M", "url": "https://leetcode.com/problems/jump-game-ii/", "id": 357 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Gas Station", "diff": "M", "url": "https://leetcode.com/problems/gas-station/", "id": 358 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Candy", "diff": "H", "url": "https://leetcode.com/problems/candy/", "id": 359 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Task Scheduler", "diff": "M", "url": "https://leetcode.com/problems/task-scheduler/", "id": 360 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Partition Labels", "diff": "M", "url": "https://leetcode.com/problems/partition-labels/", "id": 361 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 362 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Non-overlapping Intervals", "diff": "M", "url": "https://leetcode.com/problems/non-overlapping-intervals/", "id": 363 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Minimum Number of Arrows to Burst Balloons", "diff": "M", "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/", "id": 364 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Queue Reconstruction by Height", "diff": "M", "url": "https://leetcode.com/problems/queue-reconstruction-by-height/", "id": 365 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Boats to Save People", "diff": "M", "url": "https://leetcode.com/problems/boats-to-save-people/", "id": 366 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Best Time to Buy and Sell Stock II", "diff": "M", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/", "id": 367 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Lemonade Change", "diff": "E", "url": "https://leetcode.com/problems/lemonade-change/", "id": 368 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Valid Parenthesis String", "diff": "M", "url": "https://leetcode.com/problems/valid-parenthesis-string/", "id": 369 }, { "topic": "Greedy", "pattern": "Greedy", "title": "Minimum Add to Make Parentheses Valid", "diff": "M", "url": "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/", "id": 370 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Merge Intervals", "diff": "M", "url": "https://leetcode.com/problems/merge-intervals/", "id": 371 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Insert Interval", "diff": "M", "url": "https://leetcode.com/problems/insert-interval/", "id": 372 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Non-overlapping Intervals", "diff": "M", "url": "https://leetcode.com/problems/non-overlapping-intervals/", "id": 373 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Meeting Rooms", "diff": "E", "url": "https://leetcode.com/problems/meeting-rooms/", "id": 374 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Meeting Rooms II", "diff": "M", "url": "https://leetcode.com/problems/meeting-rooms-ii/", "id": 375 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Minimum Number of Arrows to Burst Balloons", "diff": "M", "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/", "id": 376 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Employee Free Time", "diff": "H", "url": "https://leetcode.com/problems/employee-free-time/", "id": 377 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Interval List Intersections", "diff": "M", "url": "https://leetcode.com/problems/interval-list-intersections/", "id": 378 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "My Calendar I", "diff": "M", "url": "https://leetcode.com/problems/my-calendar-i/", "id": 379 }, { "topic": "Intervals", "pattern": "Merge Intervals", "title": "Car Pooling", "diff": "M", "url": "https://leetcode.com/problems/car-pooling/", "id": 380 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Rotate Image", "diff": "M", "url": "https://leetcode.com/problems/rotate-image/", "id": 381 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Spiral Matrix", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix/", "id": 382 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Spiral Matrix II", "diff": "M", "url": "https://leetcode.com/problems/spiral-matrix-ii/", "id": 383 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Set Matrix Zeroes", "diff": "M", "url": "https://leetcode.com/problems/set-matrix-zeroes/", "id": 384 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Word Search", "diff": "M", "url": "https://leetcode.com/problems/word-search/", "id": 385 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Number of Islands", "diff": "M", "url": "https://leetcode.com/problems/number-of-islands/", "id": 386 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Search a 2D Matrix", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix/", "id": 387 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Search a 2D Matrix II", "diff": "M", "url": "https://leetcode.com/problems/search-a-2d-matrix-ii/", "id": 388 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Diagonal Traverse", "diff": "M", "url": "https://leetcode.com/problems/diagonal-traverse/", "id": 389 }, { "topic": "Matrix", "pattern": "Matrix", "title": "Game of Life", "diff": "M", "url": "https://leetcode.com/problems/game-of-life/", "id": 390 }, { "topic": "Advanced Strings", "pattern": "KMP", "title": "Implement strStr() (KMP)", "diff": "E", "url": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/", "id": 391 }, { "topic": "Advanced Strings", "pattern": "KMP", "title": "Shortest Palindrome", "diff": "H", "url": "https://leetcode.com/problems/shortest-palindrome/", "id": 392 }, { "topic": "Advanced Strings", "pattern": "Rabin-Karp", "title": "Repeated String Match", "diff": "M", "url": "https://leetcode.com/problems/repeated-string-match/", "id": 393 }, { "topic": "Advanced Strings", "pattern": "Z-Algorithm", "title": "Longest Happy Prefix", "diff": "H", "url": "https://leetcode.com/problems/longest-happy-prefix/", "id": 394 }, { "topic": "Advanced Strings", "pattern": "Manacher's Algorithm", "title": "Longest Palindromic Substring", "diff": "M", "url": "https://leetcode.com/problems/longest-palindromic-substring/", "id": 395 }, { "topic": "Advanced Strings", "pattern": "String Matching", "title": "Repeated Substring Pattern", "diff": "E", "url": "https://leetcode.com/problems/repeated-substring-pattern/", "id": 396 }, { "topic": "Advanced Strings", "pattern": "String Matching", "title": "Minimum Window Substring", "diff": "H", "url": "https://leetcode.com/problems/minimum-window-substring/", "id": 397 }, { "topic": "Advanced Strings", "pattern": "String Matching", "title": "Distinct Subsequences", "diff": "H", "url": "https://leetcode.com/problems/distinct-subsequences/", "id": 398 }, { "topic": "Advanced Data Structures", "pattern": "Union-Find (DSU)", "title": "Redundant Connection", "diff": "M", "url": "https://leetcode.com/problems/redundant-connection/", "id": 399 }, { "topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Range Sum Query - Mutable", "diff": "M", "url": "https://leetcode.com/problems/range-sum-query-mutable/", "id": 400 }, { "topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Range Sum Query 2D - Immutable", "diff": "M", "url": "https://leetcode.com/problems/range-sum-query-2d-immutable/", "id": 401 }, { "topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "Count of Smaller Numbers After Self", "diff": "H", "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/", "id": 402 }, { "topic": "Advanced Data Structures", "pattern": "Segment Tree / BIT", "title": "The Skyline Problem", "diff": "H", "url": "https://leetcode.com/problems/the-skyline-problem/", "id": 403 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "LRU Cache", "diff": "M", "url": "https://leetcode.com/problems/lru-cache/", "id": 404 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "LFU Cache", "diff": "H", "url": "https://leetcode.com/problems/lfu-cache/", "id": 405 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Design Twitter", "diff": "M", "url": "https://leetcode.com/problems/design-twitter/", "id": 406 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Insert Delete GetRandom O(1)", "diff": "M", "url": "https://leetcode.com/problems/insert-delete-getrandom-o1/", "id": 407 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Design Underground System", "diff": "M", "url": "https://leetcode.com/problems/design-underground-system/", "id": 408 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Design a Leaderboard", "diff": "M", "url": "https://leetcode.com/problems/design-a-leaderboard/", "id": 409 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Min Stack", "diff": "M", "url": "https://leetcode.com/problems/min-stack/", "id": 410 }, { "topic": "Advanced Data Structures", "pattern": "Design", "title": "Time Based Key-Value Store", "diff": "M", "url": "https://leetcode.com/problems/time-based-key-value-store/", "id": 411 }, { "topic": "Advanced Data Structures", "pattern": "Monotonic Stack", "title": "Largest Rectangle in Histogram", "diff": "H", "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/", "id": 412 }, { "topic": "Stacks & Queues", "pattern": "Stack", "title": "Longest Valid Parentheses", "diff": "H", "url": "https://leetcode.com/problems/longest-valid-parentheses/", "id": 413 }, { "topic": "Graphs", "pattern": "Graph DFS/BFS", "title": "Bus Routes", "diff": "H", "url": "https://leetcode.com/problems/bus-routes/", "id": 414 }, { "topic": "Dynamic Programming", "pattern": "1D DP", "title": "Frog Jump", "diff": "H", "url": "https://leetcode.com/problems/frog-jump/", "id": 415 }, { "topic": "Dynamic Programming", "pattern": "Greedy", "title": "Minimum Number of Refueling Stops", "diff": "H", "url": "https://leetcode.com/problems/minimum-number-of-refueling-stops/", "id": 416 }, { "topic": "Arrays & Strings", "pattern": "String Basics", "title": "Text Justification", "diff": "H", "url": "https://leetcode.com/problems/text-justification/", "id": 417 }, { "topic": "Math & Bit Manipulation", "pattern": "Math", "title": "Max Points on a Line", "diff": "H", "url": "https://leetcode.com/problems/max-points-on-a-line/", "id": 418 }];
+    const TOPIC_ORDER = ["Math & Bit Manipulation", "Arrays & Strings", "Hashing (HashMap / HashSet)", "Two Pointers", "Sliding Window", "Sorting & Binary Search", "Stacks & Queues", "Linked List", "Recursion & Backtracking", "Trees (Binary Tree / BST)", "Heap / Priority Queue", "Trie", "Graphs", "Dynamic Programming", "Greedy", "Intervals", "Matrix", "Advanced Strings", "Advanced Data Structures"];
+    const STORAGE_KEY = 'dsa-mastery-progress';
+    const STREAK_KEY = 'dsa-mastery-streak';
+
+    let solved = {};
+    let streak = { current: 0, best: 0, lastDate: null };
+
+    async function loadProgress() {
+      try {
+        const res = await window.storage.get(STORAGE_KEY, false);
+        if (res && res.value) solved = JSON.parse(res.value);
+      } catch (e) { solved = {}; }
+      try {
+        const res = await window.storage.get(STREAK_KEY, false);
+        if (res && res.value) streak = JSON.parse(res.value);
+      } catch (e) { streak = { current: 0, best: 0, lastDate: null }; }
+      updateStreakDisplay();
+      render();
+    }
+
+    async function saveProgress() {
+      try { await window.storage.set(STORAGE_KEY, JSON.stringify(solved), false); }
+      catch (e) { console.error('save failed', e); }
+    }
+
+    async function updateStreak() {
+      const today = new Date().toISOString().split('T')[0];
+      if (streak.lastDate === today) return;
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (streak.lastDate === yesterday) {
+        streak.current++;
+      } else if (streak.lastDate !== today) {
+        streak.current = 1;
+      }
+      streak.lastDate = today;
+      if (streak.current > streak.best) streak.best = streak.current;
+      try { await window.storage.set(STREAK_KEY, JSON.stringify(streak), false); }
+      catch (e) { console.error('streak save failed', e); }
+      updateStreakDisplay();
+    }
+
+    function updateStreakDisplay() {
+      document.getElementById('streakNum').textContent = streak.current;
+    }
+
+    function toggleSolved(id) {
+      if (solved[id]) delete solved[id]; else { solved[id] = true; updateStreak(); }
+      saveProgress();
+      render();
+    }
+
+    async function resetProgress() {
+      if (!confirm('Clear all checked-off progress? This cannot be undone.')) return;
+      solved = {};
+      try { await window.storage.delete(STORAGE_KEY, false); } catch (e) { }
+      render();
+    }
+
+    // populate filters
+    function initFilters() {
+      const topicSel = document.getElementById('topicFilter');
+      TOPIC_ORDER.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        topicSel.appendChild(o);
+      });
+      const patterns = [...new Set(PROBLEMS.map(p => p.pattern))].sort();
+      const patSel = document.getElementById('patternFilter');
+      patterns.forEach(p => {
+        const o = document.createElement('option');
+        o.value = p; o.textContent = p;
+        patSel.appendChild(o);
+      });
+    }
+
+    let diffFilter = 'all';
+    let statusFilter = 'all';
+
+    document.getElementById('diffChips').addEventListener('click', e => {
+      if (!e.target.classList.contains('chip')) return;
+      diffFilter = e.target.dataset.v;
+      [...e.currentTarget.children].forEach(c => c.classList.toggle('active', c === e.target));
+      render();
+    });
+    document.getElementById('statusChips').addEventListener('click', e => {
+      if (!e.target.classList.contains('chip')) return;
+      statusFilter = e.target.dataset.v;
+      [...e.currentTarget.children].forEach(c => c.classList.toggle('active', c === e.target));
+      render();
+    });
+    document.getElementById('searchBox').addEventListener('input', render);
+    document.getElementById('topicFilter').addEventListener('change', render);
+    document.getElementById('patternFilter').addEventListener('change', render);
+    document.getElementById('resetBtn').addEventListener('click', resetProgress);
+
+    const openTopics = new Set();
+
+    function render() {
+      const q = document.getElementById('searchBox').value.trim().toLowerCase();
+      const topicF = document.getElementById('topicFilter').value;
+      const patternF = document.getElementById('patternFilter').value;
+
+      let filtered = PROBLEMS.filter(p => {
+        if (topicF !== 'all' && p.topic !== topicF) return false;
+        if (patternF !== 'all' && p.pattern !== patternF) return false;
+        if (diffFilter !== 'all' && p.diff !== diffFilter) return false;
+        const isSolved = !!solved[p.id];
+        if (statusFilter === 'solved' && !isSolved) return false;
+        if (statusFilter === 'unsolved' && isSolved) return false;
+        if (q) {
+          const hay = (p.title + ' ' + p.pattern + ' ' + p.topic).toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      // overall stats (always computed off full set, not filtered)
+      const totalSolved = Object.keys(solved).length;
+      document.getElementById('statTotal').textContent = PROBLEMS.length;
+      document.getElementById('statSolved').textContent = totalSolved;
+      document.getElementById('statEasy').textContent = PROBLEMS.filter(p => p.diff === 'E' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'E').length;
+      document.getElementById('statMedium').textContent = PROBLEMS.filter(p => p.diff === 'M' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'M').length;
+      document.getElementById('statHard').textContent = PROBLEMS.filter(p => p.diff === 'H' && solved[p.id]).length + ' / ' + PROBLEMS.filter(p => p.diff === 'H').length;
+      const pct = PROBLEMS.length ? Math.round((totalSolved / PROBLEMS.length) * 100) : 0;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = totalSolved + ' / ' + PROBLEMS.length + ' solved · ' + pct + '%';
+
+      const container = document.getElementById('topicsContainer');
+      container.innerHTML = '';
+
+      if (filtered.length === 0) {
+        const div = document.createElement('div');
+        div.className = 'empty-msg';
+        div.textContent = 'No problems match these filters.';
+        container.appendChild(div);
+        return;
+      }
+
+      TOPIC_ORDER.forEach((topic, idx) => {
+        const items = filtered.filter(p => p.topic === topic);
+        if (items.length === 0) return;
+
+        const allInTopic = PROBLEMS.filter(p => p.topic === topic);
+        const solvedInTopic = allInTopic.filter(p => solved[p.id]).length;
+        const topicPct = allInTopic.length ? Math.round((solvedInTopic / allInTopic.length) * 100) : 0;
+
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'topic' + (openTopics.has(topic) ? ' open' : '');
+
+        const head = document.createElement('div');
+        head.className = 'topic-head';
+        head.innerHTML = `
+      <span class="topic-num">${String(idx + 1).padStart(2, '0')}</span>
       <span class="topic-title">${topic}</span>
       <span class="topic-count">${solvedInTopic}/${allInTopic.length}</span>
       <span class="topic-bar"><span class="topic-bar-inner" style="width:${topicPct}%"></span></span>
       <span class="caret">&#9656;</span>
     `;
-    head.addEventListener('click', () => {
-      if (openTopics.has(topic)) openTopics.delete(topic); else openTopics.add(topic);
-      render();
-    });
+        head.addEventListener('click', () => {
+          if (openTopics.has(topic)) openTopics.delete(topic); else openTopics.add(topic);
+          render();
+        });
 
-    const body = document.createElement('div');
-    body.className = 'topic-body';
-    items.forEach(p => {
-      const row = document.createElement('div');
-      row.className = 'prow' + (solved[p.id] ? ' done' : '');
-      const solFile = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') + '.py';
-      row.innerHTML = `
+        const body = document.createElement('div');
+        body.className = 'topic-body';
+        items.forEach(p => {
+          const row = document.createElement('div');
+          row.className = 'prow' + (solved[p.id] ? ' done' : '');
+          const solFile = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') + '.py';
+          row.innerHTML = `
         <input type="checkbox" ${solved[p.id] ? 'checked' : ''} data-id="${p.id}">
         <a class="ptitle" href="${p.url}" target="_blank" rel="noopener">${p.title}</a>
         <span class="ppattern">${p.pattern}</span>
@@ -520,18 +885,19 @@ function render() {
         <a class="psol" href="./solutions/${solFile}" target="_blank" title="View solution">Sol</a>
         <a class="plink" href="${p.url}" target="_blank" rel="noopener" title="Open problem">&#8599;</a>
       `;
-      row.querySelector('input').addEventListener('change', () => toggleSolved(p.id));
-      body.appendChild(row);
-    });
+          row.querySelector('input').addEventListener('change', () => toggleSolved(p.id));
+          body.appendChild(row);
+        });
 
-    topicDiv.appendChild(head);
-    topicDiv.appendChild(body);
-    container.appendChild(topicDiv);
-  });
-}
+        topicDiv.appendChild(head);
+        topicDiv.appendChild(body);
+        container.appendChild(topicDiv);
+      });
+    }
 
-initFilters();
-loadProgress();
-</script>
+    initFilters();
+    loadProgress();
+  </script>
 </body>
+
 </html>
